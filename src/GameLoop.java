@@ -15,27 +15,42 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 
+import Animation.AnimationData;
+import Animation.AnimationDef;
+import Animation.FrameDef;
+import Background.BackgroundDef;
+import Character.YoshiData;
+import Helpers.Camera;
+
 public class GameLoop {
     // Set this to true to make the game loop exit.
     private static boolean shouldExit;
 
     // The previous frame's keyboard state.
     private static boolean kbPrevState[] = new boolean[256];
-
     // The current frame's keyboard state.
     private static boolean kbState[] = new boolean[256];
 
-    // Position of the sprite and chaser.
-    private static int[] spritePos = new int[] { 100, 50 };
-	private static int[] chaserPos = new int[] { 10, 10 };
-	
-    // Texture for the sprite and chaser.
-    private static int spriteTex;
-    private static int chaserTex;
+    // Position of the sprite
+    private static int[] spritePos = new int[] {0, 0};
+    // Texture for the sprite
+    private static int yoshiSprite;
+    //texture of still yoshi
+    private static int yoshiStillSprite;
+    // Size of the sprite
+    private static int[] yoshiSize = new int[2];
+    private static int[] yoshiStillSize = new int[2];
+
     
-    // Size of the sprite and chaser.
-    private static int[] spriteSize = new int[2];
-    private static int[] chaserSize = new int[2];
+    private static final int tileNumX=40, tileNumY = 40;//tiles in the world in the x and y direction;
+    
+    //Texture for Background
+    private static int bgID[] = new int[4];
+    private static int[] tileSize = new int[2];
+    private static BackgroundDef bgDef;//Background Definition 
+    
+    //animation stuff
+    private static AnimationDef yoshiSpace;
 
     public static void main(String[] args) {
         GLProfile gl2Profile;
@@ -52,8 +67,8 @@ public class GameLoop {
 
         // Create the window and OpenGL context.
         GLWindow window = GLWindow.create(new GLCapabilities(gl2Profile));
-        window.setSize(800, 600);
-        window.setTitle("Gotta Catch 'Em All");
+        window.setSize(400, 600);
+        window.setTitle("Is it there?");
         window.setVisible(true);
         window.setDefaultCloseOperation(
                 WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
@@ -78,16 +93,89 @@ public class GameLoop {
         // Setup OpenGL state.
         window.getContext().makeCurrent();
         GL2 gl = window.getGL().getGL2();
-        gl.glViewport(0, 0, 800, 600);
+        gl.glViewport(0, 0, 400, 600);
         gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glOrtho(0, 800, 600, 0, 0, 100);
+        gl.glOrtho(0, 400, 600, 0, 0, 100);
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Game initialization goes here.
-		spriteTex = glTexImageTGAFile(gl, "sprites\\magikarp.tga", spriteSize);
-		chaserTex = glTexImageTGAFile(gl, "sprites\\test.tga", chaserSize);
+
+		//label ID's
+		bgID[0]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\red.tga", tileSize);
+		bgID[1]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\blue.tga", tileSize);
+		bgID[2]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\green.tga", tileSize);
+		bgID[3]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\yellow.tga", tileSize);
+		
+//	How do I do a background def setup?
+		//bgDef = new BackgroundDef(0,(tileNumX*tileNumY)); //a new background definition with no initial tiles that is the tileNumX/Y size
+//		for(int i=0;i<bgID.length;i++){
+//			bgDef.setTile(bgID[i],bgID.length);//add all tiles to the background;
+//		}
+		
+		
+		int bg[][] = new int[][]{
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},//1,40
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},//10,40
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},//1,40
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
+			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},//10,40
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
+			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]}
+			};
+
+		//camera setup
+		Camera c = new Camera(0,0);
+		
+		//yoshi player
+        YoshiData yoshi= new YoshiData(10,10);
+        yoshiStillSprite = glTexImageTGAFile(gl, ".\\sprites\\yoshi1.tga", yoshiSize);
+        yoshiStillSize = yoshiSize;
+		yoshiSprite = yoshiStillSprite;
+		
+		//set up the animation for pressing space for yoshi (stick tongue out)
+		int[] sizeForFrame = new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
+		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame),sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame),sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame), sizeForFrame,100f), //tongue back in
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame), sizeForFrame,100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame), sizeForFrame,100f)};
+		yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
+		AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
+
 			
         // The game loop
         long lastFrameNS;
@@ -97,8 +185,6 @@ public class GameLoop {
             lastFrameNS = curFrameNS;
             curFrameNS = System.nanoTime();
             long deltaTimeMS = (curFrameNS - lastFrameNS) / 1000000;
-            if (deltaTimeMS == 0){deltaTimeMS = 1;}
-
             // Actually, this runs the entire OS message pump.
             window.display();
             
@@ -107,86 +193,92 @@ public class GameLoop {
                 break;
             }
 			
-            //TODO check if chaser is less than pos of magikarp, 
-            //that means it is before, so look to the right. If it is more, look to the left.
-            //maybe make an isBefore method to check then change the drawing of the chaser to orient to face the magikarp
+           //do animation changes
+            	if(yoshi.isTongueOut()){
+            		yoshiSpaceData.update(deltaTimeMS);
+                	yoshiSprite = yoshiSpaceData.getCurFrameImage();
+                	yoshiSize = yoshiSpaceData.getcurFrameSize();
+                	if(yoshiSpaceData.getCurFrame()==yoshiSpaceData.getMaxFrame()){
+                		//you are at the max frame so stop the animation
+                		yoshi.setTongueOut(false);
+                		yoshiSprite = yoshiStillSprite;
+                		yoshiSize = yoshiStillSize;
+                	}
+                	//System.out.println(yoshiSpaceData.);
+//                	yoshiSize = yoshiSpaceData.getAnimDefSize(yoshiSprite);
+            	}
+            	
+            
+            
+            
+            
             // Game logic goes here.
-            if (kbState[KeyEvent.VK_ESCAPE]) {
+            if (kbState[KeyEvent.VK_ESCAPE]) {	
                 shouldExit = true;
             }
             
-            //go up sprite
-			if(kbState[KeyEvent.VK_W]){
-            	if(spritePos[1]>0){
-            		spritePos[1]-= 120 / deltaTimeMS;          	
-            	}
-            }
-			
-			//go left           
+            //TODO keyboard movement goes here
+            
+            //go left
             if(kbState[KeyEvent.VK_A]){
             	if(spritePos[0]>0){
-            		spritePos[0]-=  120/deltaTimeMS;
+            		spritePos[0]-=  1 * deltaTimeMS;
             	}
             } 
-            //go down
-            if(kbState[KeyEvent.VK_S]){
-            	//if the sprite size is within delta of the height and window, do the things
-            	if(spritePos[1]<(window.getHeight()-spriteSize[1])){
-            		spritePos[1]+= 120/deltaTimeMS;
-            	}
-            } 
-            //go right
-            if(kbState[KeyEvent.VK_D]) {
-            	//if delta of sprite size is within the width of the window, do the things
-            	if(spritePos[0]<(window.getWidth()-spriteSize[0])){
-            		spritePos[0]+= 120/deltaTimeMS;
+            if(kbState[KeyEvent.VK_LEFT]){
+            	int currentX = c.getX();
+            	if(currentX>=0){
+            		
+            		c.setX(currentX-=1*deltaTimeMS);
             	}
             }
-            
-            	//move chaser            
-				//if it is above of the sprite
-            	if(chaserPos[1]>spritePos[1]) {
-					chaserPos[1]-= (60 / deltaTimeMS);}
-            	//if it is below the sprite
-            	if(chaserPos[1]<spritePos[1]){
-            		chaserPos[1]+= (60 / deltaTimeMS);
+            //go right
+            if(kbState[KeyEvent.VK_D]){
+            	if(spritePos[0]<(window.getWidth()-yoshiSize[0])){
+            		spritePos[0]+= 1*deltaTimeMS;
             	}
-            	
-    		
+
+            }
+            if(kbState[KeyEvent.VK_RIGHT]){
+            	int currentX = c.getX();
+            	if(currentX<window.getWidth()){
+            		
+            		c.setX(currentX-=5*deltaTimeMS);//go 5 tiles in the delta time? currently 5*16=80
+            	}
+            	System.out.println(c.getX()+", "+c.getY());
+            }
             
-            	//if the chaser is to the left of the sprite
-            	if(chaserPos[0]>spritePos[0]) {
-					chaserPos[0]-= 60 / deltaTimeMS;}
-            	//if the chaser is to the right of the sprite
-            	if(chaserPos[0]<spritePos[0]) {
-					chaserPos[0]+= 60 / deltaTimeMS;}
-           
-            
-            //catch check
-            catchCheck();
+            if(kbState[KeyEvent.VK_SPACE]){
+            	//do animation!
+            	yoshi.setTongueOut(true);
+            }
+ 
             
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+            
+            //TODO draw background,
+            for(int i = 0; i<32; i++){
+            	for(int j = 0; j<40;j++){
+                	glDrawSprite(gl,bg[i][j],i*16,j*16,16,16);
+                }
+            }
+//            glDrawSprite(gl,bgHillsTex,bgHillsPos[0],bgHillsPos[1],bgHillsSize[0],bgHillsSize[1]);
+//            bgHillsPos[0]+=bgHillsPos[0];
+//            bgHillsPos[1]+=bgHillsPos[1];
+//
+//            glDrawSprite(gl,bgHillsTex,bgHillsPos[0],bgHillsPos[1],bgHillsSize[0],bgHillsSize[1]);
+//d
+//            glDrawSprite(gl,bgTreesTex,bgTreesPos[0],bgTreesPos[1],bgTreesSize[0],bgTreesSize[1]);
+//            glDrawSprite(gl,bgBushesTex,bgBushesPos[0],bgBushesPos[1],bgBushesSize[0],bgBushesSize[1]);
 
             // Draw the sprite
-            glDrawSprite(gl, spriteTex, spritePos[0], spritePos[1], spriteSize[0],spriteSize[1]);
-            glDrawSprite(gl, chaserTex, chaserPos[0], chaserPos[1], chaserSize[0],chaserSize[1]);
+            glDrawSprite(gl, yoshiSprite, spritePos[0], spritePos[1], yoshiSize[0],yoshiSize[1]);
+            
+            //TODO draw HUD or other things on top of sprite
+          //  window.swapBuffers();
         }
     }
-
-	private static void catchCheck() {
-		if(Math.abs(chaserPos[0]-spritePos[0])<20 && Math.abs(chaserPos[1]-spritePos[1])<10){
-			//it is caught
-			//random values for width and height
-			Random rW = new Random();
-			Random rH = new Random();
-			
-			spritePos[0] = rW.nextInt(800-spriteSize[0]);
-			spritePos[1] = rH.nextInt(600-spriteSize[1]);
-			chaserPos[0] = rW.nextInt(800-chaserSize[0]);
-			chaserPos[1] = rH.nextInt(600-chaserSize[1]);
-		}
-	}
 
 	// Load a file into an OpenGL texture and return that texture.
     public static int glTexImageTGAFile(GL2 gl, String filename, int[] out_size) {
