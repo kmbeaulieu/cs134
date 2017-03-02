@@ -1,6 +1,6 @@
 package Background;
 
-public class BackgroundTrees {
+public class BackgroundLayers {
 	public static int[][] backgroundTrees = new int[][]{
 		{69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69},
 		{69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69,69},
@@ -19,6 +19,13 @@ public class BackgroundTrees {
 		{68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68},
 	};
 	
-	public static final String FL = ".\\backgrounds\\bgTrees\\"; //file name
+	public static int[][] backgroundBushes = new int[][]{
+		{69,70,71,72,69,73,74,75,69,76,77,78,69},
+		{79,80,81,82,83,84,85,86,87,88,89,90,91},
+		{92,93,94,95,96,97,94,99,100,101,102,103,104}
+	};
+	
+	public static final String FTL = ".\\backgrounds\\bgTrees\\"; //file tree location
+	public static final String FBL = ".\\backgrounds\\bgBushes\\"; //file bushes location
 	public static final String FNE = ".tga"; //file name ending
 }

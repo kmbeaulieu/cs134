@@ -19,7 +19,7 @@ import Animation.AnimationData;
 import Animation.AnimationDef;
 import Animation.FrameDef;
 import Background.BackgroundDef;
-import Background.BackgroundTrees;
+import Background.BackgroundLayers;
 import Character.YoshiData;
 import Helpers.Camera;
 
@@ -38,20 +38,16 @@ public class GameLoop {
     private static int yoshiSprite;
     //texture of still yoshi
     private static int yoshiStillSprite;
-    // Size of the sprite
+    // Size of the sprite, this should probably be put somewhere into the Yoshi.java
     private static int[] yoshiSize = new int[2];
-    private static int[] yoshiStillSize = new int[2];
-
+    private static int[] yoshiStillSize = new int[2]; //yoshi standing still
     
-    private static final int tileNumX=40, tileNumY = 40;//tiles in the world in the x and y direction;
-    
-    //Texture for Background
-    private static int bgID[] = new int[4];
+    //Tile size for Background
     private static int[] tileSize = new int[2];
-    private static BackgroundDef bgDef;//Background Definition 
     
     //animation stuff
     private static AnimationDef yoshiSpace;
+    private static AnimationDef yoshiWalk;
 
     public static void main(String[] args) {
         GLProfile gl2Profile;
@@ -68,7 +64,7 @@ public class GameLoop {
 
         // Create the window and OpenGL context.
         GLWindow window = GLWindow.create(new GLCapabilities(gl2Profile));
-        window.setSize(400, 600);
+        window.setSize(400, 400);
         window.setTitle("Is it there?");
         window.setVisible(true);
         window.setDefaultCloseOperation(
@@ -94,47 +90,71 @@ public class GameLoop {
         // Setup OpenGL state.
         window.getContext().makeCurrent();
         GL2 gl = window.getGL().getGL2();
-        gl.glViewport(0, 0, 400, 600);
+        gl.glViewport(0, 0, 400, 400);
         gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glOrtho(0, 400, 600, 0, 0, 100);
+        gl.glOrtho(0, 400, 400, 0, 0, 100);
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Game initialization goes here.
-		
+        
+		//load the bajillions of background files 0-68 is for the hills, 69 is transparent
 		for(int i=1;i<70;i++){
-			String filename = BackgroundTrees.FL + i + BackgroundTrees.FNE;
+			String filename = BackgroundLayers.FTL + i + BackgroundLayers.FNE;
+			glTexImageTGAFile(gl,filename,tileSize);
+		}
+		//70-104 is bushes
+		for(int i=70;i<105;i++){
+			String filename = BackgroundLayers.FBL + i + BackgroundLayers.FNE;
 			glTexImageTGAFile(gl,filename,tileSize);
 		}
 		
-		int bg[][] = BackgroundTrees.backgroundTrees;// keep the long nasty 2d away from the game loop
-	
+		int bgTrees[][] = BackgroundLayers.backgroundTrees;// keep the long nasty 2d away from the game loop
+		int bgBushes[][] = BackgroundLayers.backgroundBushes; 
 		//camera setup
 		Camera c = new Camera(0,0);
 		
 		//yoshi player
-        YoshiData yoshi= new YoshiData(10,10);
+        YoshiData yoshi= new YoshiData(10,150);
         yoshiStillSprite = glTexImageTGAFile(gl, ".\\sprites\\yoshi1.tga", yoshiSize);
         yoshiStillSize = yoshiSize;
 		yoshiSprite = yoshiStillSprite;
 		
 		//set up the animation for pressing space for yoshi (stick tongue out)
 		int[] sizeForFrame = new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
-		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame),sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame),sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame), sizeForFrame,100f), //tongue back in
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame), sizeForFrame,100f),
+		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame),new int[2],100f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame),sizeForFrame,200f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,300f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,400f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,500f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame), sizeForFrame,600f), //tongue back in
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,500f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,400f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,300f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame), sizeForFrame,200f),
 				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame), sizeForFrame,100f)};
 		yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
 		AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
-
+		//set up walking animation
+		int[] walkingAnimSize = new int[2];
+		FrameDef[] yoshiWalkFrames = new FrameDef[]{
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,70f),
+		};
+		yoshiWalk = new AnimationDef("yoshiwalk",yoshiWalkFrames);
+		AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
+		
 			
         // The game loop
         long lastFrameNS;
@@ -180,29 +200,42 @@ public class GameLoop {
             
             //go left
             if(kbState[KeyEvent.VK_A]){
-            	if(spritePos[0]>0){
-            		spritePos[0]-=  1 * deltaTimeMS;
+            	if(yoshi.getX()>0){
+            		
+            		yoshi.setX((int)(yoshi.getX()-(1 * deltaTimeMS)));
             	}
+            	
+        		yoshiSize = yoshiWalkingData.getcurFrameSize();
             } 
             if(kbState[KeyEvent.VK_LEFT]){
             	int currentX = c.getX();
             	if(currentX>=0){
             		
             		c.setX(currentX-=1*deltaTimeMS);
+                	System.out.println(c.getX()+", "+c.getY());
+
             	}
             }
             //go right
             if(kbState[KeyEvent.VK_D]){
-            	if(spritePos[0]<(window.getWidth()-yoshiSize[0])){
-            		spritePos[0]+= 1*deltaTimeMS;
+            	if(yoshi.getX()<(window.getWidth()-yoshiSize[0])){
+            		//update the walking anim
+            		yoshiWalkingData.update(deltaTimeMS);
+            		yoshiSprite = yoshiWalkingData.getCurFrameImage();
+            		yoshiSize = yoshiWalkingData.getcurFrameSize();
+            		//move yoshi
+            		yoshi.setX((int)(yoshi.getX()+(.17*deltaTimeMS)));
             	}
-
+            	//update anim but dont move yoshi at the end of the screen
+            	yoshiWalkingData.update(deltaTimeMS);
+        		yoshiSprite = yoshiWalkingData.getCurFrameImage();
+        		yoshiSize = yoshiWalkingData.getcurFrameSize();
             }
             if(kbState[KeyEvent.VK_RIGHT]){
             	int currentX = c.getX();
             	if(currentX<window.getWidth()){
             		
-            		c.setX(currentX-=5*deltaTimeMS);//go 5 tiles in the delta time? currently 5*16=80
+            		c.setX(currentX+=5*deltaTimeMS);//go 5 tiles in the delta time? currently 5*16=80
             	}
             	System.out.println(c.getX()+", "+c.getY());
             }
@@ -216,23 +249,29 @@ public class GameLoop {
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
-            //TODO draw background,
-            for(int i = 0; i<15; i++){
-            	for(int j = 0; j<32;j++){
-                	glDrawSprite(gl,bg[i][j],j*16,i*16,16,16);
+            //background then yoshi then bushes as foreground
+            for(int y = 0; y<15; y++){
+            	for(int x = 0; x<32;x++){
+            		//draw the trees
+                	glDrawSprite(gl,bgTrees[y][x],x*16,y*16,16,16);
                 }
             }
-//            glDrawSprite(gl,bgHillsTex,bgHillsPos[0],bgHillsPos[1],bgHillsSize[0],bgHillsSize[1]);
-//            bgHillsPos[0]+=bgHillsPos[0];
-//            bgHillsPos[1]+=bgHillsPos[1];
-//
-//            glDrawSprite(gl,bgHillsTex,bgHillsPos[0],bgHillsPos[1],bgHillsSize[0],bgHillsSize[1]);
-//d
-//            glDrawSprite(gl,bgTreesTex,bgTreesPos[0],bgTreesPos[1],bgTreesSize[0],bgTreesSize[1]);
-//            glDrawSprite(gl,bgBushesTex,bgBushesPos[0],bgBushesPos[1],bgBushesSize[0],bgBushesSize[1]);
-
-            // Draw the sprite
-            glDrawSprite(gl, yoshiSprite, spritePos[0], spritePos[1], yoshiSize[0],yoshiSize[1]);
+            // Draw yoshi
+            glDrawSprite(gl, yoshiSprite, yoshi.getX(), yoshi.getY(), yoshiSize[0],yoshiSize[1]);
+            //bushes
+            for(int y =0;y<3;y++){
+            	for(int x=0;x<13;x++){
+            		//x tiles across, y tiles down
+            		glDrawSprite(gl,bgBushes[y][x],x*16,(y+12)*16,16,16);
+            	}
+            }//2 bushes length long so need another loop TODO merge two bushes into one [][]
+            for(int y =0;y<3;y++){
+            	for(int x=0;x<13;x++){
+            		//x tiles across, y tiles down
+            		glDrawSprite(gl,bgBushes[y][x],(x+13)*16,(y+12)*16,16,16);
+            	}
+            }
+           
             
             //TODO draw HUD or other things on top of sprite
           //  window.swapBuffers();

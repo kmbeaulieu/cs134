@@ -18,5 +18,11 @@ public class YoshiData extends CharacterData {
 		// TODO Auto-generated method stub
 		isTongueOut = b;
 	}
-	
+
+	public void setX(int i) {
+		this.x = i;
+	}
+	public void setY(int i) {
+		this.y = i;
+	}
 }
