@@ -1,8 +1,8 @@
 package Background;
 
 public class BackgroundDef {
-	private int width = 40;
-	private int height = 40;
+	private int width = 32;
+	private int height = 15;
 	private int[] tiles;
 	
 	/**

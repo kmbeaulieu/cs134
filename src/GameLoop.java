@@ -19,6 +19,7 @@ import Animation.AnimationData;
 import Animation.AnimationDef;
 import Animation.FrameDef;
 import Background.BackgroundDef;
+import Background.BackgroundTrees;
 import Character.YoshiData;
 import Helpers.Camera;
 
@@ -101,56 +102,14 @@ public class GameLoop {
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Game initialization goes here.
-
-		//label ID's
-		bgID[0]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\red.tga", tileSize);
-		bgID[1]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\blue.tga", tileSize);
-		bgID[2]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\green.tga", tileSize);
-		bgID[3]=glTexImageTGAFile(gl,".\\backgrounds\\color tiles\\yellow.tga", tileSize);
 		
-//	How do I do a background def setup?
-		//bgDef = new BackgroundDef(0,(tileNumX*tileNumY)); //a new background definition with no initial tiles that is the tileNumX/Y size
-//		for(int i=0;i<bgID.length;i++){
-//			bgDef.setTile(bgID[i],bgID.length);//add all tiles to the background;
-//		}
+		for(int i=1;i<70;i++){
+			String filename = BackgroundTrees.FL + i + BackgroundTrees.FNE;
+			glTexImageTGAFile(gl,filename,tileSize);
+		}
 		
-		
-		int bg[][] = new int[][]{
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},//1,40
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},//10,40
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},//1,40
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0],bgID[0]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1]},
-			{bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],bgID[1],},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},//10,40
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2],bgID[2]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]},
-			{bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3],bgID[3]}
-			};
-
+		int bg[][] = BackgroundTrees.backgroundTrees;// keep the long nasty 2d away from the game loop
+	
 		//camera setup
 		Camera c = new Camera(0,0);
 		
@@ -258,9 +217,9 @@ public class GameLoop {
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
             //TODO draw background,
-            for(int i = 0; i<32; i++){
-            	for(int j = 0; j<40;j++){
-                	glDrawSprite(gl,bg[i][j],i*16,j*16,16,16);
+            for(int i = 0; i<15; i++){
+            	for(int j = 0; j<32;j++){
+                	glDrawSprite(gl,bg[i][j],j*16,i*16,16,16);
                 }
             }
 //            glDrawSprite(gl,bgHillsTex,bgHillsPos[0],bgHillsPos[1],bgHillsSize[0],bgHillsSize[1]);
