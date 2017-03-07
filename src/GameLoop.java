@@ -44,11 +44,16 @@ public class GameLoop {
     //Tile size for Background
     private static int[] tileSize = new int[2];
     //world's x tiles and y tile lengths
-    private static int worldXTiles = 64;
+    private static int worldXTiles = 63;
     private static int worldYTiles = 15;
+    
     //resolution of the screen for the camera
     private static int screenResX = 200;
     private static int screenResY = 200;
+    
+    //16for tile size
+    private static int offsetMaxX = worldXTiles * 16 - screenResX;
+	private static int offsetMinX = 0;
 
     //animation stuff
     private static AnimationDef yoshiSpace;
@@ -147,22 +152,26 @@ public class GameLoop {
 		//set up walking animation
 		int[] walkingAnimSize = new int[2];
 		FrameDef[] yoshiWalkFrames = new FrameDef[]{
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,10f),
 		};
 		yoshiWalk = new AnimationDef("yoshiwalk",yoshiWalkFrames);
 		AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
 		
+//		int[] walkingLeftAnimSize = new int[2];
+//		frameDef[] yoshiWalkLeftFrames = new FrameDef[]{};
+//		yoshiWalkLeft = new AnimationDef("yoshiWalkLeft",yoshiWalkLeftFrames);
+//		
 			
         // The game loop
         long lastFrameNS;
@@ -210,10 +219,11 @@ public class GameLoop {
             	if(!yoshi.goingLeft){
             		yoshi.goingRight=false;
             		yoshi.goingLeft=true;
+            		//TODO make yoshi go left for animations using gl rotate or transform
             		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
             	}
             	if(yoshi.getX()-3>=0){
-            		yoshi.setX((yoshi.getX()-3));
+            		yoshi.moveYoshiLeft();
             	}
 
             	
@@ -233,13 +243,15 @@ public class GameLoop {
             		yoshi.goingRight=true;
             		yoshi.goingLeft=false;
             		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
+            		
             	}
-            	if(yoshi.getX()+3 <= (worldXTiles*tileSize[0])-yoshiSize[0] ){
-            		yoshi.setX(yoshi.getX()+3);
+            	if(yoshi.getX()+3 <= (c.getX()*tileSize[0])+screenResX && yoshi.getX()<worldXTiles*tileSize[0]-yoshiSize[0]){
+            		yoshi.moveYoshiRight();
+            		//yoshi.setX(yoshi.getX()+yoshi.getSpeed());
 
             	}
             	//dont move yoshi but still do walk animation
-            	yoshiWalkingData.update(deltaTimeMS);
+            	yoshiWalkingData.update(deltaTimeMS);  
         		yoshiSprite = yoshiWalkingData.getCurFrameImage();
         		yoshiSize = yoshiWalkingData.getcurFrameSize();
         		
@@ -248,15 +260,21 @@ public class GameLoop {
             
             //camera controls
             if(kbState[KeyEvent.VK_RIGHT]){
-            	
+//            	if(c.getX()+3<worldXTiles*tileSize[0]){
+//            		c.setX(c.getX()+3);
+//            	}
+            	//this works to stop the camera movement
+            	if(c.getX()+screenResX+c.getSpeed()<worldXTiles*tileSize[0]){
+            		c.setX(c.getX()+c.getSpeed());
+            	}
             }
             
             if(kbState[KeyEvent.VK_LEFT]){
             	/*if moving the camera left keeps it within the game world, 
             	 * then move the camera. For now move the camera at yoshi's speed
             	 */
-            	if(c.getX()-3>0){
-            		c.setX(c.getX()-3);
+            	if(c.getX()-c.getSpeed()>0){
+            		c.setX(c.getX()-c.getSpeed());
             	}
             }
             //tongue animation
@@ -269,35 +287,49 @@ public class GameLoop {
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
-            //background then yoshi then bushes as foreground
-        
-            
-            //start at 0, load until you get to the window(aka camera)'s right edge and add one so it isnt loading half a tile
-            for(int x=0;x<64;x++){
-	            
-	            	for(int y = 0; y < 15 ;y++){
+//keep cam centered
+//            c.setX(yoshi.getX() - screenResX / 2);
+//			if (c.getX() > offsetMaxX) {
+//				c.setX(offsetMaxX);
+//			} else if (c.getX() < offsetMinX) {
+//				c.setX(offsetMinX);
+//			}
+            //for now load all tiles
+            for(int x=0;x<worldXTiles;x++){
+	            	for(int y = 0; y < worldYTiles ;y++){
 	            		//draw the hills/trees
 	            		//move the hills/trees back/forth at an eighth yoshi's speed and camera position	
-	            		if(x<bgTrees.length && y<bgTrees[y].length){
+	            		if(x<bgTrees.length*tileSize[0] && y<bgTrees[y].length*tileSize[1]){
 	            			//yoshiFourthCam will move the background at an eighth of the speed of yoshi (and take care of the offset of the camera)
-	            			int treesXEighthCam = c.getX()+(yoshi.getX()/8);
-		                	glDrawSprite(gl,bgTrees[y][x],(x*tileSize[0])-treesXEighthCam,(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
-	            		}
-	            		
+	            			int treesXThirdCam = c.getX()+(yoshi.getX()/3);
+		                	glDrawSprite(gl,bgTrees[y][x],(x*tileSize[0])-treesXThirdCam,(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
+	            		}	
 	                }
-	            
            }
-            // Draw yoshi
-            glDrawSprite(gl, yoshiSprite, yoshi.getX(), yoshi.getY(), yoshiSize[0],yoshiSize[1]);
-            //bushes are 3 tiles tall and 26 tiles across
+            // Draw yoshi, quick fix for going left. Is there a REAL way to do this?
+            	if(yoshi.goingLeft){
+                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX()+yoshiSize[0], yoshi.getY()-c.getY(), yoshiSize[0]*(-1),yoshiSize[1]);
+
+                }else if(yoshi.goingRight){
+                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX(), yoshi.getY()-c.getY(), yoshiSize[0],yoshiSize[1]);
+
+                }else{
+                	//yoshi is stationary
+                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX(), yoshi.getY()-c.getY(), yoshiSize[0],yoshiSize[1]);
+                }
+            
+            
+            //glDrawSprite();
+            //bushes are 3 tiles tall and 26 tiles across per group of bushes
             //TODO put this in with the camera controls
-            for(int y =0;y<3;y++){
-            	for(int x=0;x<26;x++){    
+            for(int y =0;y<bgBushes.length;y++){
+            	for(int x=0;x<worldXTiles+1;x++){    
             		//bushes are drawn at the lower portion of the screen hence the offset to y
             		//bushes move at 1/3 speed of yoshi
-            		int bushesXThirdYoshiCam = c.getX()+(yoshi.getX()/3);
-                	glDrawSprite(gl,bgBushes[y][x],(x)*tileSize[0]-bushesXThirdYoshiCam,(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
-
+            		if(x<worldXTiles*tileSize[0] && y<bgBushes.length*tileSize[1]){
+            			int bushesXTwoThirdYoshiCam = c.getX()+(yoshi.getX()*2/3);
+            			glDrawSprite(gl,bgBushes[y][x],(x)*tileSize[0]-bushesXTwoThirdYoshiCam,(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
+            		}
             	}
             }
            
