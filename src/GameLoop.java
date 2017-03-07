@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Random;
 
 import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.event.KeyEvent;
@@ -44,10 +43,16 @@ public class GameLoop {
     
     //Tile size for Background
     private static int[] tileSize = new int[2];
-    
+    //world's x tiles and y tile lengths
+    private static int worldXTiles = 64;
+    private static int worldYTiles = 15;
+    //resolution of the screen for the camera
+    private static int screenResX = 200;
+    private static int screenResY = 200;
+
     //animation stuff
     private static AnimationDef yoshiSpace;
-    private static AnimationDef yoshiWalk;
+    private static AnimationDef yoshiWalk; //TODO flip yoshi's sprite for left vs right
 
     public static void main(String[] args) {
         GLProfile gl2Profile;
@@ -64,7 +69,7 @@ public class GameLoop {
 
         // Create the window and OpenGL context.
         GLWindow window = GLWindow.create(new GLCapabilities(gl2Profile));
-        window.setSize(400, 400);
+        window.setSize(screenResX, screenResY);
         window.setTitle("Is it there?");
         window.setVisible(true);
         window.setDefaultCloseOperation(
@@ -90,9 +95,9 @@ public class GameLoop {
         // Setup OpenGL state.
         window.getContext().makeCurrent();
         GL2 gl = window.getGL().getGL2();
-        gl.glViewport(0, 0, 400, 400);
+        gl.glViewport(0, 0, screenResX, screenResY);
         gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glOrtho(0, 400, 400, 0, 0, 100);
+        gl.glOrtho(0, screenResX, screenResY, 0, 0, 100);
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
@@ -104,14 +109,15 @@ public class GameLoop {
 			String filename = BackgroundLayers.FTL + i + BackgroundLayers.FNE;
 			glTexImageTGAFile(gl,filename,tileSize);
 		}
-		//70-104 is bushes
+		//70-104 is bushes, there is a 69 for transparent in this folder too
 		for(int i=70;i<105;i++){
 			String filename = BackgroundLayers.FBL + i + BackgroundLayers.FNE;
 			glTexImageTGAFile(gl,filename,tileSize);
 		}
-		
-		int bgTrees[][] = BackgroundLayers.backgroundTrees;// keep the long nasty 2d away from the game loop
+		//load the tile formation for the backgrounds
+		int bgTrees[][] = BackgroundLayers.backgroundTrees;//I did this to keep the long nasty 2d array from cluttering the game loop
 		int bgBushes[][] = BackgroundLayers.backgroundBushes; 
+		
 		//camera setup
 		Camera c = new Camera(0,0);
 		
@@ -121,36 +127,38 @@ public class GameLoop {
         yoshiStillSize = yoshiSize;
 		yoshiSprite = yoshiStillSprite;
 		
-		//set up the animation for pressing space for yoshi (stick tongue out)
-		int[] sizeForFrame = new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
-		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame),new int[2],100f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame),sizeForFrame,200f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,300f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,400f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,500f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame), sizeForFrame,600f), //tongue back in
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame), sizeForFrame,500f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame), sizeForFrame,400f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame), sizeForFrame,300f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame), sizeForFrame,200f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame), sizeForFrame,100f)};
+		//set up the animation for pressing space for yoshi (stick tongue out), the timing is staggered to make it look better
+		int[] sizeForFrame1,sizeForFrame2,sizeForFrame3,sizeForFrame4,sizeForFrame5,sizeForFrame6;
+		sizeForFrame1=sizeForFrame2=sizeForFrame3=sizeForFrame4=sizeForFrame5=sizeForFrame6= new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
+		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1),sizeForFrame1,10f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2),sizeForFrame2,20f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame6), sizeForFrame6,60f), //tongue back in
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2,20f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1,10f)};
 		yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
 		AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
+		
 		//set up walking animation
 		int[] walkingAnimSize = new int[2];
 		FrameDef[] yoshiWalkFrames = new FrameDef[]{
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,70f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,70f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,1f),
 		};
 		yoshiWalk = new AnimationDef("yoshiwalk",yoshiWalkFrames);
 		AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
@@ -172,19 +180,18 @@ public class GameLoop {
                 break;
             }
 			
-           //do animation changes
+           //do animation changes that happen even if a key is not pressed (ex walking is not here because it only happens when a key is pressed)
             	if(yoshi.isTongueOut()){
             		yoshiSpaceData.update(deltaTimeMS);
                 	yoshiSprite = yoshiSpaceData.getCurFrameImage();
                 	yoshiSize = yoshiSpaceData.getcurFrameSize();
+                	
                 	if(yoshiSpaceData.getCurFrame()==yoshiSpaceData.getMaxFrame()){
                 		//you are at the max frame so stop the animation
                 		yoshi.setTongueOut(false);
                 		yoshiSprite = yoshiStillSprite;
                 		yoshiSize = yoshiStillSize;
                 	}
-                	//System.out.println(yoshiSpaceData.);
-//                	yoshiSize = yoshiSpaceData.getAnimDefSize(yoshiSprite);
             	}
             	
             
@@ -195,53 +202,66 @@ public class GameLoop {
             if (kbState[KeyEvent.VK_ESCAPE]) {	
                 shouldExit = true;
             }
-            
-            //TODO keyboard movement goes here
-            
-            //go left
+                        
+            //go left, continue animation but dont move if at the end of the screen
             if(kbState[KeyEvent.VK_A]){
-            	if(yoshi.getX()>0){
-            		
-            		yoshi.setX((int)(yoshi.getX()-(1 * deltaTimeMS)));
+            	//if not at the left edge of the world then move left
+            	//if it wasnt going left before, it is now so flip. 
+            	if(!yoshi.goingLeft){
+            		yoshi.goingRight=false;
+            		yoshi.goingLeft=true;
+            		yoshiSprite = gl.glRotatef(180, 0, 1, 0);
             	}
-            	
-        		yoshiSize = yoshiWalkingData.getcurFrameSize();
-            } 
-            if(kbState[KeyEvent.VK_LEFT]){
-            	int currentX = c.getX();
-            	if(currentX>=0){
-            		
-            		c.setX(currentX-=1*deltaTimeMS);
-                	System.out.println(c.getX()+", "+c.getY());
+            	if(yoshi.getX()-3>=0){
+            		yoshi.setX((yoshi.getX()-3));
+            	}
 
-            	}
-            }
-            //go right
-            if(kbState[KeyEvent.VK_D]){
-            	if(yoshi.getX()<(window.getWidth()-yoshiSize[0])){
-            		//update the walking anim
-            		yoshiWalkingData.update(deltaTimeMS);
-            		yoshiSprite = yoshiWalkingData.getCurFrameImage();
-            		yoshiSize = yoshiWalkingData.getcurFrameSize();
-            		//move yoshi
-            		yoshi.setX((int)(yoshi.getX()+(.17*deltaTimeMS)));
-            	}
-            	//update anim but dont move yoshi at the end of the screen
+            	
             	yoshiWalkingData.update(deltaTimeMS);
         		yoshiSprite = yoshiWalkingData.getCurFrameImage();
         		yoshiSize = yoshiWalkingData.getcurFrameSize();
-            }
-            if(kbState[KeyEvent.VK_RIGHT]){
-            	int currentX = c.getX();
-            	if(currentX<window.getWidth()){
-            		
-            		c.setX(currentX+=5*deltaTimeMS);//go 5 tiles in the delta time? currently 5*16=80
+        		 
+            } 
+           
+            //go right, continue animation even if at the end
+            if(kbState[KeyEvent.VK_D]){
+            	//dont move if you are at the end of the world size
+            	//TODO fix the camera issues here
+            	//TODO add back in the delta to make it smoother?
+            	//if it wasnt going left before, it is now so flip. 
+            	if(!yoshi.goingRight){
+            		yoshi.goingRight=true;
+            		yoshi.goingLeft=false;
+            		yoshiSprite = gl.glRotatef(180, 0, 1, 0);
             	}
-            	System.out.println(c.getX()+", "+c.getY());
+            	if(yoshi.getX()+3 <= (worldXTiles*tileSize[0])-yoshiSize[0] ){
+            		yoshi.setX(yoshi.getX()+3);
+
+            	}
+            	//dont move yoshi but still do walk animation
+            	yoshiWalkingData.update(deltaTimeMS);
+        		yoshiSprite = yoshiWalkingData.getCurFrameImage();
+        		yoshiSize = yoshiWalkingData.getcurFrameSize();
+        		
+//           
             }
             
+            //camera controls
+            if(kbState[KeyEvent.VK_RIGHT]){
+            	
+            }
+            
+            if(kbState[KeyEvent.VK_LEFT]){
+            	/*if moving the camera left keeps it within the game world, 
+            	 * then move the camera. For now move the camera at yoshi's speed
+            	 */
+            	if(c.getX()-3>0){
+            		c.setX(c.getX()-3);
+            	}
+            }
+            //tongue animation
             if(kbState[KeyEvent.VK_SPACE]){
-            	//do animation!
+            	//get the animation rolling
             	yoshi.setTongueOut(true);
             }
  
@@ -249,26 +269,38 @@ public class GameLoop {
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
+            //keep yoshi in middle of the screen
+         //   c.setX(yoshi.getX() - screenResX / 2);
+            
             //background then yoshi then bushes as foreground
-            for(int y = 0; y<15; y++){
-            	for(int x = 0; x<32;x++){
-            		//draw the trees
-                	glDrawSprite(gl,bgTrees[y][x],x*16,y*16,16,16);
-                }
-            }
+         //  startTile = BackgroundCheck(c.getX(),c.getY());
+            
+            //start at 0, load until you get to the window(aka camera)'s right edge and add one so it isnt loading half a tile
+            for(int x=0;x<64;x++){
+	            
+	            	for(int y = 0; y < 15 ;y++){
+	            		//draw the hills/trees
+	            		//move the hills/trees back/forth at an eighth yoshi's speed and camera position	
+	            		if(x<bgTrees.length && y<bgTrees[y].length){
+	            			//yoshiFourthCam will move the background at an eighth of the speed of yoshi (and take care of the offset of the camera)
+	            			int treesXEighthCam = c.getX()+(yoshi.getX()/8);
+		                	glDrawSprite(gl,bgTrees[y][x],(x*tileSize[0])-treesXEighthCam,(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
+	            		}
+	            		
+	                }
+	            
+           }
             // Draw yoshi
             glDrawSprite(gl, yoshiSprite, yoshi.getX(), yoshi.getY(), yoshiSize[0],yoshiSize[1]);
-            //bushes
+            //bushes are 3 tiles tall and 26 tiles across
+            //TODO put this in with the camera controls
             for(int y =0;y<3;y++){
-            	for(int x=0;x<13;x++){
-            		//x tiles across, y tiles down
-            		glDrawSprite(gl,bgBushes[y][x],x*16,(y+12)*16,16,16);
-            	}
-            }//2 bushes length long so need another loop TODO merge two bushes into one [][]
-            for(int y =0;y<3;y++){
-            	for(int x=0;x<13;x++){
-            		//x tiles across, y tiles down
-            		glDrawSprite(gl,bgBushes[y][x],(x+13)*16,(y+12)*16,16,16);
+            	for(int x=0;x<26;x++){    
+            		//bushes are drawn at the lower portion of the screen hence the offset to y
+            		//bushes move at 1/3 speed of yoshi
+            		int bushesXThirdYoshiCam = c.getX()+(yoshi.getX()/3);
+                	glDrawSprite(gl,bgBushes[y][x],(x)*tileSize[0]-bushesXThirdYoshiCam,(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
+
             	}
             }
            
@@ -371,4 +403,5 @@ public class GameLoop {
         }
         gl.glEnd();
     }
+    
 }

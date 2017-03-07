@@ -22,6 +22,12 @@ public class CharacterData {
 	public int getY(){
 		return y;
 	}
+	public int addToX(int i){
+		return (x + i);
+	}
+	public int addToY(int i){
+		return (y+i);
+	}
 	public boolean isWalking(){
 		return isWalking;
 	}

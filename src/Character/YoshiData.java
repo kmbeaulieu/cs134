@@ -2,6 +2,8 @@ package Character;
 
 public class YoshiData extends CharacterData {
 	private boolean isTongueOut; 
+	public boolean goingLeft;
+	public boolean goingRight;
 	
 	public YoshiData(int x, int y){
 		this.x = x;
