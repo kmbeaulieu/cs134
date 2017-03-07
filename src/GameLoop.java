@@ -70,7 +70,7 @@ public class GameLoop {
         // Create the window and OpenGL context.
         GLWindow window = GLWindow.create(new GLCapabilities(gl2Profile));
         window.setSize(screenResX, screenResY);
-        window.setTitle("Is it there?");
+        window.setTitle("Walk Yoshi");
         window.setVisible(true);
         window.setDefaultCloseOperation(
                 WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
@@ -131,34 +131,34 @@ public class GameLoop {
 		int[] sizeForFrame1,sizeForFrame2,sizeForFrame3,sizeForFrame4,sizeForFrame5,sizeForFrame6;
 		sizeForFrame1=sizeForFrame2=sizeForFrame3=sizeForFrame4=sizeForFrame5=sizeForFrame6= new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
 		FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1),sizeForFrame1,10f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2),sizeForFrame2,20f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame6), sizeForFrame6,60f), //tongue back in
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2,20f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1,10f)};
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2),sizeForFrame2,20f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace6.tga", sizeForFrame6), sizeForFrame6,60f), //tongue back in
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4,40f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3,30f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2,20f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1,10f)};
 		yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
 		AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
 		
 		//set up walking animation
 		int[] walkingAnimSize = new int[2];
 		FrameDef[] yoshiWalkFrames = new FrameDef[]{
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,1f),
-				new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,1f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,1f),
 		};
 		yoshiWalk = new AnimationDef("yoshiwalk",yoshiWalkFrames);
 		AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
@@ -210,7 +210,7 @@ public class GameLoop {
             	if(!yoshi.goingLeft){
             		yoshi.goingRight=false;
             		yoshi.goingLeft=true;
-            		yoshiSprite = gl.glRotatef(180, 0, 1, 0);
+            		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
             	}
             	if(yoshi.getX()-3>=0){
             		yoshi.setX((yoshi.getX()-3));
@@ -232,7 +232,7 @@ public class GameLoop {
             	if(!yoshi.goingRight){
             		yoshi.goingRight=true;
             		yoshi.goingLeft=false;
-            		yoshiSprite = gl.glRotatef(180, 0, 1, 0);
+            		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
             	}
             	if(yoshi.getX()+3 <= (worldXTiles*tileSize[0])-yoshiSize[0] ){
             		yoshi.setX(yoshi.getX()+3);
@@ -269,11 +269,8 @@ public class GameLoop {
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
-            //keep yoshi in middle of the screen
-         //   c.setX(yoshi.getX() - screenResX / 2);
-            
             //background then yoshi then bushes as foreground
-         //  startTile = BackgroundCheck(c.getX(),c.getY());
+        
             
             //start at 0, load until you get to the window(aka camera)'s right edge and add one so it isnt loading half a tile
             for(int x=0;x<64;x++){
