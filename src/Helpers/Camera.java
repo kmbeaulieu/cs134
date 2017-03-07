@@ -14,7 +14,7 @@ public class Camera {
 	public Camera(int x, int y){
 		this.x=x;
 		this.y=y;
-		this.speed = 5;
+		this.speed = 7;
 	}
 	
 	//get the value for x and y

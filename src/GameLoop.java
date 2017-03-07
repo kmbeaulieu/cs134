@@ -44,7 +44,7 @@ public class GameLoop {
     //Tile size for Background
     private static int[] tileSize = new int[2];
     //world's x tiles and y tile lengths
-    private static int worldXTiles = 63;
+    private static int worldXTiles = 64;
     private static int worldYTiles = 15;
     
     //resolution of the screen for the camera
@@ -292,11 +292,11 @@ public class GameLoop {
 //				c.setX(offsetMinX);
 //			}
             //for now load all tiles
-            for(int x=0;x<worldXTiles;x++){
-	            	for(int y = 0; y < worldYTiles ;y++){
+            for(int x=0;x<BackgroundLayers.BGTREELENGTH;x++){
+	            	for(int y = 0; y < BackgroundLayers.BGTREEHEIGHT ;y++){
 	            		//draw the hills/trees
 	            		//move the hills/trees back/forth at an eighth yoshi's speed and camera position	
-	            		if(x<bgTrees.length*tileSize[0] && y<bgTrees[y].length*tileSize[1]){
+	            		if(x<BackgroundLayers.BGTREELENGTH*tileSize[0] && y<BackgroundLayers.BGTREEHEIGHT*tileSize[1]){
 	            			//yoshiFourthCam will move the background at an eighth of the speed of yoshi (and take care of the offset of the camera)
 	            			int treesXThirdCam = c.getX()+(yoshi.getX()/3);
 		                	glDrawSprite(gl,bgTrees[y][x],(x*tileSize[0])-treesXThirdCam,(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
@@ -319,11 +319,11 @@ public class GameLoop {
             //glDrawSprite();
             //bushes are 3 tiles tall and 26 tiles across per group of bushes
             //TODO put this in with the camera controls
-            for(int y =0;y<bgBushes.length;y++){
-            	for(int x=0;x<worldXTiles+1;x++){    
+            for(int y =0;y<BackgroundLayers.BGBUSHHEIGHT;y++){
+            	for(int x=0;x<BackgroundLayers.BGBUSHLENGTH;x++){    
             		//bushes are drawn at the lower portion of the screen hence the offset to y
             		//bushes move at 1/3 speed of yoshi
-            		if(x<worldXTiles*tileSize[0] && y<bgBushes.length*tileSize[1]){
+            		if(x<BackgroundLayers.BGBUSHLENGTH*tileSize[0] && y<BackgroundLayers.BGBUSHHEIGHT*tileSize[1]){
             			int bushesXTwoThirdYoshiCam = c.getX()+(yoshi.getX()*2/3);
             			glDrawSprite(gl,bgBushes[y][x],(x)*tileSize[0]-bushesXTwoThirdYoshiCam,(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
             		}

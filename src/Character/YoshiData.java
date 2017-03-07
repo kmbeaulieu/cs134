@@ -7,7 +7,7 @@ public class YoshiData extends CharacterData {
 	private int speed;
 	
 	/**
-	 * Make a yoshi at a certain coordinate. The default speed is 3.
+	 * Make a yoshi at a certain coordinate. The default speed is 5.
 	 * @param x is the x coordinate.
 	 * @param y is the y coordinate. 
 	 */
@@ -15,7 +15,7 @@ public class YoshiData extends CharacterData {
 		this.x = x;
 		this.y = y;
 		isTongueOut = false;
-		this.speed = 3;
+		this.speed = 5;
 		
 	}
 	
