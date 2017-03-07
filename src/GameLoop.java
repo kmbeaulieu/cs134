@@ -260,9 +260,6 @@ public class GameLoop {
             
             //camera controls
             if(kbState[KeyEvent.VK_RIGHT]){
-//            	if(c.getX()+3<worldXTiles*tileSize[0]){
-//            		c.setX(c.getX()+3);
-//            	}
             	//this works to stop the camera movement
             	if(c.getX()+screenResX+c.getSpeed()<worldXTiles*tileSize[0]){
             		c.setX(c.getX()+c.getSpeed());
