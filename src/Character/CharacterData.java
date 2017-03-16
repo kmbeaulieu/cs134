@@ -6,6 +6,8 @@ public class CharacterData {
 	int y;
 	boolean isWalking;
 	AnimationData currAnimation;
+	double velocity;
+	
 	
 	void update(float deltaTime){
 		

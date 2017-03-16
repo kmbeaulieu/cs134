@@ -13,6 +13,7 @@ public class AnimationData {
 	 this.secsUntilNextFrame = def.frames[curFrame].frameTimeSecs;
  }
  
+ 
  public void update(float deltaTime){
 	 //update the seconds until next frame
 	 secsUntilNextFrame -=  deltaTime; 

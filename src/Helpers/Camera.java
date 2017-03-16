@@ -4,6 +4,7 @@ public class Camera {
 	private int x;
 	private int y;
 	private int speed;
+	private AABB box;
 	
 	/**
 	 * create the camera with the top left corner at the given x and y
@@ -15,6 +16,7 @@ public class Camera {
 		this.x=x;
 		this.y=y;
 		this.speed = 7;
+		this.box = new AABB(x,y);
 	}
 	
 	//get the value for x and y
@@ -26,16 +28,21 @@ public class Camera {
 		return y;
 	}
 	
+	public AABB getAABB(){
+		return box;
+	}
 	public int getSpeed(){
 		return speed;
 	}
 	//set the value for x and y
 	public void setX(int x) {
 		this.x = x;
+		this.box.updateX(this.x);
 	}
 
 	public void setY(int y) {
 		this.y = y;
+		this.box.updateY(this.y);
 	}
 	public void setSpeed(int s){
 		this.speed = s;

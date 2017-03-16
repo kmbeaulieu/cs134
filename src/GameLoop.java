@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.event.KeyEvent;
@@ -17,9 +18,12 @@ import com.jogamp.opengl.GLProfile;
 import Animation.AnimationData;
 import Animation.AnimationDef;
 import Animation.FrameDef;
+import Background.BackgroundAnimDef;
 import Background.BackgroundDef;
 import Background.BackgroundLayers;
+import Background.Tile;
 import Character.YoshiData;
+import Helpers.AABB;
 import Helpers.Camera;
 
 public class GameLoop {
@@ -41,23 +45,25 @@ public class GameLoop {
     private static int[] yoshiSize = new int[2];
     private static int[] yoshiStillSize = new int[2]; //yoshi standing still
     
+  //background stuff
+    static BackgroundDef backgroundMain;
+    BackgroundDef BackgroundForeGround;
+    BackgroundDef levelTiles;
     //Tile size for Background
+    private static ArrayList<Tile> tiles = new ArrayList<Tile>();
     private static int[] tileSize = new int[2];
     //world's x tiles and y tile lengths
-    private static int worldXTiles = 64;
+    private static int worldXTiles = 100;
     private static int worldYTiles = 15;
     
     //resolution of the screen for the camera
     private static int screenResX = 200;
     private static int screenResY = 200;
-    
-    //16for tile size
-    private static int offsetMaxX = worldXTiles * 16 - screenResX;
-	private static int offsetMinX = 0;
 
     //animation stuff
     private static AnimationDef yoshiSpace;
     private static AnimationDef yoshiWalk; //TODO flip yoshi's sprite for left vs right
+    
 
     public static void main(String[] args) {
         GLProfile gl2Profile;
@@ -109,28 +115,81 @@ public class GameLoop {
 
 		// Game initialization goes here.
         
-		//load the bajillions of background files 0-68 is for the hills, 69 is transparent
+        //------KEEP LOADING THINGS IN THIS ORDER OR FUN TIMES WILL NOT BE HAD ADD TO BOTTOM ONLY-----------
+        //NOTE: File names start at 1 but the tiles index starts at 0 because arraylist TODO refactor file names for images
+		//load the bajillions of background files 1-68 is for the hills, 69 is transparent
 		for(int i=1;i<70;i++){
 			String filename = BackgroundLayers.FTL + i + BackgroundLayers.FNE;
-			glTexImageTGAFile(gl,filename,tileSize);
+			//store the tga info into a class called tile so it can store more states later
+			tiles.add( new Tile(filename, glTexImageTGAFile(gl,filename,tileSize), tileSize));
+			
 		}
 		//70-104 is bushes, there is a 69 for transparent in this folder too
 		for(int i=70;i<105;i++){
 			String filename = BackgroundLayers.FBL + i + BackgroundLayers.FNE;
-			glTexImageTGAFile(gl,filename,tileSize);
+			//store the tga info into a class called tile so it can store more states later
+			tiles.add(new Tile(filename, glTexImageTGAFile(gl,filename,tileSize),tileSize));
+			
 		}
-		//load the tile formation for the backgrounds
-		int bgTrees[][] = BackgroundLayers.backgroundTrees;//I did this to keep the long nasty 2d array from cluttering the game loop
-		int bgBushes[][] = BackgroundLayers.backgroundBushes; 
+		//104 is the blue sky, it's 101x101 TODO make this the full length of the bgtrees array 
+		tiles.add(new Tile("sky",glTexImageTGAFile(gl,".//backgrounds//colortiles//sky.tga",tileSize),tileSize));
+		Tile[][] skybackground = new Tile[101][101];
+		for(int y =0;y<101;y++)
+		{
+			for(int x=0;x<101;x++){
+				skybackground[y][x] = tiles.get(104);
+			}
+		}
 		
+		//----------THIS IS THE BOTTOM OF LOADING IMAGES, ADD MORE RIGHT ABOVE ME----------------
+		
+		//load the tile formation for the backgrounds with hills/trees
+		 Tile[][] backgroundTrees = new Tile[][]{
+				{tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(0), tiles.get(1), tiles.get(2),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(9),tiles.get(10),tiles.get(11),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(9),tiles.get(10),tiles.get(11),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(9),tiles.get(10),tiles.get(11),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68), tiles.get(3), tiles.get(4), tiles.get(5), tiles.get(6), tiles.get(7), tiles.get(8),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(9),tiles.get(10),tiles.get(11),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(18),tiles.get(19),tiles.get(20),tiles.get(21),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(18),tiles.get(19),tiles.get(20),tiles.get(21),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(18),tiles.get(19),tiles.get(20),tiles.get(21),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(12),tiles.get(13),tiles.get(14),tiles.get(15),tiles.get(16),tiles.get(17),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(18),tiles.get(19),tiles.get(20),tiles.get(21),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(29),tiles.get(30),tiles.get(31),tiles.get(32),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(29),tiles.get(30),tiles.get(31),tiles.get(32),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(29),tiles.get(30),tiles.get(31),tiles.get(32),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(22),tiles.get(23),tiles.get(24),tiles.get(25),tiles.get(26),tiles.get(27),tiles.get(28),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(29),tiles.get(30),tiles.get(31),tiles.get(32),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(40),tiles.get(41),tiles.get(42),tiles.get(43),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(40),tiles.get(41),tiles.get(42),tiles.get(43),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(40),tiles.get(41),tiles.get(42),tiles.get(43),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(33),tiles.get(34),tiles.get(35),tiles.get(36),tiles.get(37),tiles.get(38),tiles.get(39),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(40),tiles.get(41),tiles.get(42),tiles.get(43),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68),tiles.get(68)},
+				{tiles.get(44),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(55),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(56),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(44),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(55),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(56),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(44),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(55),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(56),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(44),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(52),tiles.get(53),tiles.get(54),tiles.get(55),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(48),tiles.get(49),tiles.get(50),tiles.get(51),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(45),tiles.get(46),tiles.get(47),tiles.get(56),tiles.get(54),tiles.get(55),tiles.get(52),tiles.get(53),tiles.get(55)},
+				{tiles.get(57),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(61),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(57),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(61),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(57),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(61),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(57),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(61),tiles.get(62),tiles.get(63),tiles.get(61),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(58),tiles.get(59),tiles.get(59),tiles.get(60),tiles.get(63),tiles.get(64),tiles.get(61),tiles.get(62),tiles.get(63)},
+				{tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(66),tiles.get(66),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65),tiles.get(65)},
+				{tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67)},
+				{tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67)},
+				{tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67)},
+				{tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67),tiles.get(67)},
+			};
+		
+		Tile[][] backgroundBushes = new Tile[][]{
+			{tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68),tiles.get(68),tiles.get(69),tiles.get(70),tiles.get(71),tiles.get(68),tiles.get(72),tiles.get(73),tiles.get(74),tiles.get(68),tiles.get(75),tiles.get(76),tiles.get(77),tiles.get(68)},
+			{tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89),tiles.get(90),tiles.get(78),tiles.get(79),tiles.get(80),tiles.get(81),tiles.get(82),tiles.get(83),tiles.get(84),tiles.get(85),tiles.get(86),tiles.get(87),tiles.get(88),tiles.get(89)},
+			{tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102),tiles.get(103),tiles.get(91),tiles.get(92),tiles.get(93),tiles.get(94),tiles.get(95),tiles.get(96),tiles.get(93),tiles.get(98),tiles.get(99),tiles.get(100),tiles.get(101),tiles.get(102)}
+		};	
 		//camera setup
 		Camera c = new Camera(0,0);
+		c.getAABB().setH(screenResX);
+		c.getAABB().setW(screenResY);
+		
 		
 		//yoshi player
         YoshiData yoshi= new YoshiData(10,150);
         yoshiStillSprite = glTexImageTGAFile(gl, ".\\sprites\\yoshi1.tga", yoshiSize);
-        yoshiStillSize = yoshiSize;
+        yoshi.getAABB().setW(yoshiSize[0]); //this should set yoshi's AABB width to the width of its sprite
+        yoshi.getAABB().setH(yoshiSize[1]); //this should set yoshi's AABB height to the height of its sprite
+        yoshiStillSize = yoshiSize; //TODO actually get a frame for yoshi's still sprite;
 		yoshiSprite = yoshiStillSprite;
+		//TODO get cloud background working, need a background anim data and such
+//		int[] cloudSize = new int[2];
+//		FrameDef[] cloudTiles = new FrameDef[]{
+//				new FrameDef(glTexImageTGAFile(gl, "backgrounds\\cloudanim\\small\\1.tga", cloudSize),cloudSize,400f),
+//				new FrameDef(glTexImageTGAFile(gl, "backgrounds\\cloudanim\\small\\2.tga", cloudSize),cloudSize,350f),
+//				new FrameDef(glTexImageTGAFile(gl, "backgrounds\\cloudanim\\small\\3.tga", cloudSize),cloudSize,400f),
+//				new FrameDef(glTexImageTGAFile(gl, "backgrounds\\cloudanim\\small\\4.tga", cloudSize),cloudSize,330f)
+//		};
+//		AnimationDef cloudbg = new AnimationDef("floatycloudsmall",cloudTiles);
+//		AnimationData cloudanim = new AnimationData(cloudbg);
 		
 		//set up the animation for pressing space for yoshi (stick tongue out), the timing is staggered to make it look better
 		int[] sizeForFrame1,sizeForFrame2,sizeForFrame3,sizeForFrame4,sizeForFrame5,sizeForFrame6;
@@ -149,29 +208,42 @@ public class GameLoop {
 		yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
 		AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
 		
-		//set up walking animation
+		//set up walking (right) animation TODO refactor name
 		int[] walkingAnimSize = new int[2];
 		FrameDef[] yoshiWalkFrames = new FrameDef[]{
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,10f),
-				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize,50f),
 		};
 		yoshiWalk = new AnimationDef("yoshiwalk",yoshiWalkFrames);
 		AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
 		
-//		int[] walkingLeftAnimSize = new int[2];
-//		frameDef[] yoshiWalkLeftFrames = new FrameDef[]{};
-//		yoshiWalkLeft = new AnimationDef("yoshiWalkLeft",yoshiWalkLeftFrames);
-//		
+		//yoshi walking left animation setup
+		FrameDef[] yoshiWalkLeftFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\1.tga", walkingAnimSize), walkingAnimSize,10f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\2.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\3.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\4.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\5.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\6.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\7.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\8.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\9.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\10.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\11.tga", walkingAnimSize), walkingAnimSize,50f),
+				new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\12.tga", walkingAnimSize), walkingAnimSize,50f),
+		};
+		AnimationDef yoshiWalkLeft = new AnimationDef("yoshiWalkLeft",yoshiWalkLeftFrames);
+		AnimationData yoshiWalkingLeftData = new AnimationData(yoshiWalkLeft);
+		
 			
         // The game loop
         long lastFrameNS;
@@ -188,9 +260,13 @@ public class GameLoop {
                 shouldExit = true;
                 break;
             }
-			
+			//for physics
+            /*
+             * do{}while()
+             */
+            
            //do animation changes that happen even if a key is not pressed (ex walking is not here because it only happens when a key is pressed)
-            	if(yoshi.isTongueOut()){
+            	if(yoshi.isTongueOut){
             		yoshiSpaceData.update(deltaTimeMS);
                 	yoshiSprite = yoshiSpaceData.getCurFrameImage();
                 	yoshiSize = yoshiSpaceData.getcurFrameSize();
@@ -203,6 +279,8 @@ public class GameLoop {
                 	}
             	}
             	
+            //TODO cloudanim.update(deltaTimeMS);
+            	
             
             
             
@@ -213,122 +291,107 @@ public class GameLoop {
             }
                         
             //go left, continue animation but dont move if at the end of the screen
-            if(kbState[KeyEvent.VK_A]){
-            	//if not at the left edge of the world then move left
-            	//if it wasnt going left before, it is now so flip. 
-            	if(!yoshi.goingLeft){
-            		yoshi.goingRight=false;
-            		yoshi.goingLeft=true;
-            		//TODO make yoshi go left for animations using gl rotate or transform
-            		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
-            	}
-            	if(yoshi.getX()-3>=0){
+            if(kbState[KeyEvent.VK_LEFT]){
+            	//if not at the left edge of the world then move left            	
+            	if(yoshi.getX()-c.getSpeed()>=0){
             		yoshi.moveYoshiLeft();
             	}
-
-            	
-            	yoshiWalkingData.update(deltaTimeMS);
-        		yoshiSprite = yoshiWalkingData.getCurFrameImage();
-        		yoshiSize = yoshiWalkingData.getcurFrameSize();
+            	int cHalf = (c.getX()+screenResX)/2;
+        		if(yoshi.getX()>cHalf){
+        			if(c.getX()-yoshi.getSpeed()>0){
+                		c.setX(c.getX()-yoshi.getSpeed());
+        			}else{
+        				c.setX(0);
+        			}
+        		}
+            	yoshiWalkingLeftData.update(deltaTimeMS);
+        		yoshiSprite = yoshiWalkingLeftData.getCurFrameImage();
+        		yoshiSize = yoshiWalkingLeftData.getcurFrameSize();
         		 
             } 
            
             //go right, continue animation even if at the end
-            if(kbState[KeyEvent.VK_D]){
+            if(kbState[KeyEvent.VK_RIGHT]){
             	//dont move if you are at the end of the world size
-            	//TODO fix the camera issues here
-            	//TODO add back in the delta to make it smoother?
-            	//if it wasnt going left before, it is now so flip. 
-            	if(!yoshi.goingRight){
-            		yoshi.goingRight=true;
-            		yoshi.goingLeft=false;
-            		//yoshiSprite = gl.glRotatef(180, 0, 1, 0);
-            		
-            	}
-            	if(yoshi.getX()+3 <= (c.getX()*tileSize[0])+screenResX && yoshi.getX()<worldXTiles*tileSize[0]-yoshiSize[0]){
+            	
+            	//if yoshi is within the world, move right
+            	if(yoshi.getX()+yoshi.getSpeed() <= worldXTiles*tileSize[0]-yoshiSize[0]){
             		yoshi.moveYoshiRight();
-            		//yoshi.setX(yoshi.getX()+yoshi.getSpeed());
+            		//if yoshi is beyond the middle of the screen
+            		int cHalf = (c.getX()+screenResX)/2;
+            		if(cHalf<yoshi.getX()){
+            			//if moving the camera is within the world, move the camera, else stop at the end
+            			if(c.getX()+yoshi.getSpeed()+screenResX<worldXTiles*tileSize[0]){
+                    		c.setX(c.getX()+yoshi.getSpeed());
+            			}else{
+            				c.setX(worldXTiles*tileSize[0]-screenResX);
+            			}
+            		}
 
             	}
             	//dont move yoshi but still do walk animation
             	yoshiWalkingData.update(deltaTimeMS);  
         		yoshiSprite = yoshiWalkingData.getCurFrameImage();
         		yoshiSize = yoshiWalkingData.getcurFrameSize();
-        		
-//           
-            }
-            
-            //camera controls
-            if(kbState[KeyEvent.VK_RIGHT]){
-            	//this works to stop the camera movement
-            	if(c.getX()+screenResX+c.getSpeed()<worldXTiles*tileSize[0]){
-            		c.setX(c.getX()+c.getSpeed());
-            	}
-            }
-            
-            if(kbState[KeyEvent.VK_LEFT]){
-            	/*if moving the camera left keeps it within the game world, 
-            	 * then move the camera. For now move the camera at yoshi's speed
-            	 */
-            	if(c.getX()-c.getSpeed()>0){
-            		c.setX(c.getX()-c.getSpeed());
-            	}
-            }
-            //tongue animation
+            } 
+           
+            //tongue animation TODO add left version
             if(kbState[KeyEvent.VK_SPACE]){
             	//get the animation rolling
             	yoshi.setTongueOut(true);
             }
+            
+            
  
             
             gl.glClearColor(0, 0, 0, 1);
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             
-//keep cam centered
-//            c.setX(yoshi.getX() - screenResX / 2);
-//			if (c.getX() > offsetMaxX) {
-//				c.setX(offsetMaxX);
-//			} else if (c.getX() < offsetMinX) {
-//				c.setX(offsetMinX);
-//			}
-            //for now load all tiles
-            for(int x=0;x<BackgroundLayers.BGTREELENGTH;x++){
-	            	for(int y = 0; y < BackgroundLayers.BGTREEHEIGHT ;y++){
-	            		//draw the hills/trees
-	            		//move the hills/trees back/forth at an eighth yoshi's speed and camera position	
+            //all tile ends/starts
+            int tileStartX = (int) Math.floor(c.getX()/tileSize[0]);
+            int tileStartY = (int) Math.floor(c.getY()/tileSize[0]);           
+        	int tileEndX = (int) Math.floor((c.getX()+screenResX)/tileSize[0]);
+        	int tileEndY = (int) Math.floor((c.getY()+screenResY)/tileSize[1]);
+            if(AABB.AABBIntersect(c.getAABB(),yoshi.getAABB())){
+            	//draw if they intersect
+            	for(int x=tileStartX;x<=tileEndX;x++){
+	            	for(int y = tileStartY; y <=tileEndY ;y++){
+	            		
+	            		//always draw the sky (but only what the camera can see)
+	            		glDrawSprite(gl,skybackground[y][x].texture, (x*tileSize[0])-c.getX(),(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
+	            		//TODO add background cloud animation draw
+	            		
 	            		if(x<BackgroundLayers.BGTREELENGTH*tileSize[0] && y<BackgroundLayers.BGTREEHEIGHT*tileSize[1]){
-	            			//yoshiFourthCam will move the background at an eighth of the speed of yoshi (and take care of the offset of the camera)
-	            			int treesXThirdCam = c.getX()+(yoshi.getX()/3);
-		                	glDrawSprite(gl,bgTrees[y][x],(x*tileSize[0])-treesXThirdCam,(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
+	            			//TODO readd parallax when a fuller background is implemented 
+	            			//int treesXThirdCam = c.getX()+(yoshi.getX()/3);
+		                	glDrawSprite(gl,backgroundTrees[y][x].texture,(x*tileSize[0])-c.getX(),(y*tileSize[1])-c.getY(),tileSize[0],tileSize[1]);
 	            		}	
 	                }
-           }
-            // Draw yoshi, quick fix for going left. Is there a REAL way to do this?
-            	if(yoshi.goingLeft){
-                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX()+yoshiSize[0], yoshi.getY()-c.getY(), yoshiSize[0]*(-1),yoshiSize[1]);
-
-                }else if(yoshi.goingRight){
-                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX(), yoshi.getY()-c.getY(), yoshiSize[0],yoshiSize[1]);
-
-                }else{
-                	//yoshi is stationary
-                    glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX(), yoshi.getY()-c.getY(), yoshiSize[0],yoshiSize[1]);
-                }
+            	}
+            	//DRAW SPRITE IF IN SCREEN
+            	if(AABB.AABBIntersect(c.getAABB(),yoshi.getAABB())){
+                        glDrawSprite(gl, yoshiSprite, yoshi.getX()-c.getX(), yoshi.getY()-c.getY(), yoshiSize[0],yoshiSize[1]);
+            	}
+            	
             
-            
-            //glDrawSprite();
-            //bushes are 3 tiles tall and 26 tiles across per group of bushes
-            //TODO put this in with the camera controls
-            for(int y =0;y<BackgroundLayers.BGBUSHHEIGHT;y++){
-            	for(int x=0;x<BackgroundLayers.BGBUSHLENGTH;x++){    
-            		//bushes are drawn at the lower portion of the screen hence the offset to y
-            		//bushes move at 1/3 speed of yoshi
-            		if(x<BackgroundLayers.BGBUSHLENGTH*tileSize[0] && y<BackgroundLayers.BGBUSHHEIGHT*tileSize[1]){
-            			int bushesXTwoThirdYoshiCam = c.getX()+(yoshi.getX()*2/3);
-            			glDrawSprite(gl,bgBushes[y][x],(x)*tileSize[0]-bushesXTwoThirdYoshiCam,(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
+            	//always on top
+            	for(int y =tileStartY;y<=tileEndY;y++){
+            		for(int x=tileStartX;x<=tileEndX;x++){    
+            			
+            			//bushes are drawn at the lower portion of the screen hence the offset to y
+	            		/*the bushes are only 3 high, and NOT the size of the camera. 
+	            		 * ONLY draw if you are at 0-2 
+	            		 * (this avoids a bajillion clear tiles being rendered and only renders those bush tiles)
+	            		 */
+            			if(y<BackgroundLayers.BGBUSHHEIGHT){
+            				//got rid of parallax for now until I can implement more backgrounds better
+            				//int bushesXTwoThirdYoshiCam = c.getX()+(yoshi.getX()*2/3);
+            				glDrawSprite(gl,backgroundBushes[y][x].texture,(x)*tileSize[0]-c.getX(),(y+10)*tileSize[1]-c.getY(),tileSize[0],tileSize[1]);
+            			}
             		}
             	}
             }
+            
            
             
             //TODO draw HUD or other things on top of sprite
