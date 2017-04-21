@@ -1,15 +1,21 @@
 package Animation;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLProfile;
+import Helpers.GameLoop;
+ 
 public class AnimationData {
- AnimationDef def;
+ public AnimationDef def;
  int curFrame; //the current frame the animation is on
  int maxFrame; //the max frame of the animation
- float secsUntilNextFrame; //seconds until next frame, to keep it even through out the anim sequence
+ public float secsUntilNextFrame; //seconds until next frame, to keep it even through out the anim sequence
  
  //make a new instance of animation data
  public AnimationData(AnimationDef def){
 	 this.def = def;
-	 this.curFrame = 1;
-	 this.maxFrame = this.def.frames.length;
+	 this.curFrame = 0;
+	 this.maxFrame = this.def.frames.length-1;
 	 this.secsUntilNextFrame = def.frames[curFrame].frameTimeSecs;
  }
  
@@ -18,21 +24,27 @@ public class AnimationData {
 	 //update the seconds until next frame
 	 secsUntilNextFrame -=  deltaTime; 
 	
-	 if(curFrame>=def.frames.length){
-		 curFrame=1;//reset the frames
+	 if(curFrame>=maxFrame){
+		 curFrame=0;//reset the frames
+                 secsUntilNextFrame = def.frames[curFrame].frameTimeSecs;
 	 }
 	
 	 //if it is time for the next frame
-	 if(secsUntilNextFrame<=0){
+	 if(secsUntilNextFrame<=0 && (curFrame<maxFrame+1)){
 		 curFrame++;
-		 secsUntilNextFrame = def.frames[curFrame-1].frameTimeSecs;
+		 secsUntilNextFrame = def.frames[curFrame].frameTimeSecs;
 		
 	 }
  }
  
- public void draw(int x, int y){
-	 
- }
+// public void draw(int x, int y){
+//	 int curTexIndex = def.frames[curFrame].image;
+//	 int tex = getCurFrameImage(); 
+//	 int[] texSize = getcurFrameSize();
+//	 
+//	 //GameLoop.glTexImageTGAFile(gl, tex, texSize, x, y);
+//	 
+// }
  /**
   * 
   * @return the current frame in the animation
@@ -45,13 +57,17 @@ public class AnimationData {
   * @return the TEXTURE image number for the current frame's animation
   */
  public int getCurFrameImage(){
-	 return def.frames[curFrame-1].image;
+	 return def.frames[curFrame].image;
  }
  
- 
+ public void resetAnimation(){
+     curFrame = 0;
+     secsUntilNextFrame = def.frames[curFrame].frameTimeSecs;
+     
+ }
  public int[] getcurFrameSize(){
 	 //returns the frame size of a certain frame since not all sizes are the same.
-	 return def.frames[curFrame-1].frameSize;
+	 return def.frames[curFrame].frameSize;
  }
  //get the frame of the animation
 //for each frame, draw

@@ -15,7 +15,7 @@ public class Camera {
 	public Camera(int x, int y){
 		this.x=x;
 		this.y=y;
-		this.speed = 7;
+		this.speed = 1;
 		this.box = new AABB(x,y);
 	}
 	

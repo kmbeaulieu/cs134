@@ -1,5 +1,7 @@
 package Background;
 
+import Helpers.AABB;
+
 public class BackgroundDef {
 	private int width;
 	private int height;
@@ -29,6 +31,8 @@ public class BackgroundDef {
 		System.out.println(test.length);
 		
 	}
+	
+	
 	/**
 	 * set a predefined layout. Is tiles[] needed then? To keep it like framedef probably..
 	 * @param layout the grid for the "level" to set up
