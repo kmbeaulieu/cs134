@@ -147,23 +147,24 @@ public class AABB {
         public static boolean AABBIntersectAbove(AABB box1, AABB box2, double yvel){
             //falling down and there is an intersect
             // && AABBisBelow(box1,box2)
-            // box1 to the right
-		 if (box1.x > box2.x + box2.w) {
-		 return false;
-		 }
-		 // box1 to the left
-		 if (box1.x + box1.w < box2.x) {
-		 return false;
-		 }
-		 // box1 below
-		 if (box1.y > box2.y + box2.h) {
-		 return false;
-		 }
-		 // box1 above
-		 if (!(box1.y + box1.h < box2.y)) {
-                     if(yvel>.009)return true;
-		 }
-            return  false;
+//            // box1 to the right
+//		 if (box1.x > box2.x + box2.w) {
+//		 return false;
+//		 }
+//		 // box1 to the left
+//		 if (box1.x + box1.w < box2.x) {
+//		 return false;
+//		 }
+//		 // box1 below
+//		 if (box1.y > box2.y + box2.h) {
+//		 return false;
+//		 }
+//		 // box1 above
+//		 if (!(box1.y + box1.h < box2.y)) {
+//                     if(yvel>.009)return true;
+//		 }
+            return AABBIntersect(box1, box2) && yvel>0;
+           // return  false;
         }
 	/**
 	 * if box 1 is below box 2

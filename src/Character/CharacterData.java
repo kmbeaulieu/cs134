@@ -50,7 +50,7 @@ public class CharacterData {
         isWalking = false;
         jumpPressed = false;
         yvelocity = 0.0;
-        isGrounded = true;
+        isGrounded = false;
         this.box = new AABB((int)x,(int)y);
         jumpvel = -.3;
         isDead = false;

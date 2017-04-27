@@ -52,6 +52,10 @@ public class GameLoop {
     private static Tile[][] backgroundLevel;
 
     static BackgroundDef backgroundMain;
+
+    private static void addEnemies() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     BackgroundDef BackgroundForeGround;
     BackgroundDef levelTiles;
     //Tile size for Background
@@ -184,7 +188,7 @@ public class GameLoop {
         FrameDef[] yoshiStillFrame = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshi1.tga", yoshiSize), yoshiSize, 1000f)};
         AnimationDef stillYoshi = new AnimationDef("stillyoshi", yoshiStillFrame);
         AnimationData stillYoshiData = new AnimationData(stillYoshi);
-        YoshiData yoshi = new YoshiData(0, 144, yoshiSize[0], yoshiSize[1], stillYoshiData);
+        YoshiData yoshi = new YoshiData(0, 100, yoshiSize[0], yoshiSize[1], stillYoshiData);
         yoshi.getAABB().setW(yoshiSize[0]); //this should set yoshi's AABB width to the width of its sprite
         yoshi.getAABB().setH(yoshiSize[1]); //this should set yoshi's AABB height to the height of its sprite
 
@@ -283,7 +287,7 @@ public class GameLoop {
         FrameDef[] shyGuyWalkingFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//shyguy//walk//1.tga", shyguySize), shyguySize, 150f)};
         AnimationDef shyGuyWalk = new AnimationDef("walking", shyGuyWalkingFrames);
         AnimationData shyGuyWalkingData = new AnimationData(shyGuyWalk);
-        Enemy shyguy = new Enemy(130, 145, shyguySize[0], shyguySize[1], shyGuyWalkingData);
+        Enemy shyguy = new Enemy(130, 145, shyguySize[0], shyguySize[1], shyGuyWalkingData, true);
         shyguy.getAABB().setW(shyguySize[0]);
         shyguy.getAABB().setH(shyguySize[1]);
         enemies.add(shyguy);
@@ -296,7 +300,7 @@ public class GameLoop {
         };
         AnimationDef pewpewShootDef = new AnimationDef("pew", pewpewGuyShootFrames);
         AnimationData pewpewData = new AnimationData(pewpewShootDef);
-        Enemy pewpew = new Enemy(250, 144, pewpewGuySize[0], pewpewGuySize[1], pewpewData);
+        Enemy pewpew = new Enemy(250, 144, pewpewGuySize[0], pewpewGuySize[1], pewpewData, true);
         int[] pewSize = new int[2];
         int pewTex = glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//pew.tga", pewSize);
         enemies.add(pewpew);
@@ -366,27 +370,37 @@ public class GameLoop {
                 int tileStartY = (int) Math.floor(c.getY() / tileSize[0]);
                 int tileEndX = (int) Math.floor((c.getX() + camWidth) / tileSize[0]);
                 int tileEndY = (int) Math.floor((c.getY() + camHeight) / tileSize[1]);
+                yoshi.setGrounded(false);
+                
+//                int yoshiTileStartX = (int) Math.floor(yoshi.getX()/tileSize[0]);
+//                int yoshiTileEndX = (int) Math.floor((yoshi.getX()+yoshi.getW())/tileSize[0]);
+//                int yoshiTileStartY = (int) Math.floor(yoshi.getY()/tileSize[1]);
+//                int yoshiTileEndY = (int) Math.floor((yoshi.getY()+yoshi.getH())/tileSize[1]);
 
                 for (int x = tileStartX; x < tileEndX; x++) {
                     for (int y = tileStartY; y < tileEndY; y++) {
                         if (backgroundLevel[y][x].collidable) {
                             tileAABB = new AABB(x * tileSize[0], y * tileSize[1], tileSize[0], tileSize[1]);
-
-//                            if (AABB.AABBIntersectLeftOf(yoshi.getAABB(), tileAABB, yoshi.getPrevX(), yoshi.getX())) {
-//                                yoshi.setX(x * tileSize[0] - yoshi.getCurrentAnimation().getcurFrameSize()[0]);
-//                            }
                             //ths doesn't work
-                            if (AABB.AABBIntersectLeftOf(yoshi.getAABB(), tileAABB, yoshi.getPrevX(), yoshi.getX())) {
-                                yoshi.setX(yoshi.getX() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
-                            }
+//                            if (AABB.AABBIntersectLeftOf(yoshi.getAABB(), tileAABB, yoshi.getPrevX(), yoshi.getX())) {
+//                              //  System.out.println("YOU INTERSECTED LEFT OF THE TILE");
+//                                yoshi.setX(yoshi.getX() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
+//                            }
+                            // character fall onto tiles
                             if (AABB.AABBIntersectAbove(tileAABB, yoshi.getAABB(), yoshi.yvelocity)) {
                                 yoshi.setY(yoshi.getY() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
                                 yoshi.setGrounded(true);
                             }
-                            if (AABB.AABBIntersectAbove(tileAABB, shyguy.getAABB(), shyguy.yvelocity)) {
-                                shyguy.setY(shyguy.getY() - AABB.getOverlap(shyguy.getAABB(), tileAABB));
-                                shyguy.setGrounded(true);
+                            // enemies fall onto the ground
+                            if (!enemies.isEmpty()) {
+                                for (Enemy e : enemies) {
+                                    if (AABB.AABBIntersectAbove(tileAABB, e.getAABB(), e.yvelocity)) {
+                                        e.setY(e.getY() - AABB.getOverlap(e.getAABB(), tileAABB));
+                                        e.setGrounded(true);
+                                    }
+                                }
                             }
+                            //projectiles fall onto the ground
                             if (!projectiles.isEmpty()) {
                                 for (int i = 0; i < projectiles.size(); i++) {
                                     if (AABB.AABBIntersect(tileAABB, projectiles.get(i).getAABB())) {
@@ -404,14 +418,15 @@ public class GameLoop {
                 //projectile collision
                 if (!projectiles.isEmpty()) {
                     for (int i = 0; i < projectiles.size(); i++) {
-                        if(AABB.AABBIntersect(projectiles.get(i).getAABB(),yoshi.getAABB())){
-                            yoshi.setHealth(yoshi.getHealth()-projectiles.get(i).getDamage());
-                            if(yoshi.getHealth()<=0){
+                        if (AABB.AABBIntersect(projectiles.get(i).getAABB(), yoshi.getAABB())) {
+                            yoshi.setHealth(yoshi.getHealth() - projectiles.get(i).getDamage());
+                            if (yoshi.getHealth() <= 0) {
                                 yoshi.setGrounded(true);
                                 yoshi.setDeath(true);
-                                
+
                             }
                             projectiles.remove(i);
+                            continue;
                         }
                         if (!enemies.isEmpty() && !projectiles.isEmpty()) {
                             for (Enemy e : enemies) {
@@ -423,41 +438,43 @@ public class GameLoop {
                                     if (e.getHealth() <= 0) {
                                         //shyguy.isDead = true;
                                         //let's take the enemy and move him somewhere else
-                                        
+
                                         e.setX((int) (Math.random() * 200));
                                         e.setY(144);
                                         e.setHealth(10);
-                         
+
                                     }
-                                    if(projectiles.isEmpty()){
-                                        break;
-                                    }
-                                } 
-                               
+                                    break;
+
+                                }
+
                             }
 
                         }//if the projectile is NOT in the camera box, remove!
-                     else if (!projectiles.isEmpty()&& !AABB.AABBIntersect(c.getAABB(), projectiles.get(i).getAABB()) ) {
-                                    projectiles.remove(i);
-                                }
+                        else if (!projectiles.isEmpty() && !AABB.AABBIntersect(c.getAABB(), projectiles.get(i).getAABB())) {
+                            projectiles.remove(i);
+                        }
                     }
                 }
-                //player collision/resolution
-                if (AABB.AABBIntersect(yoshi.getAABB(), shyguy.getAABB())) {
-                    if (AABB.AABBIntersectAbove(shyguy.getAABB(), yoshi.getAABB(), yoshi.yvelocity)) {
-                        yoshi.yvelocity = -.2;
-                        shyguy.setX((int) (Math.random() * 200));
-                        shyguy.setY(144);
-                        shyguy.setHealth(10);
+                //player/enemy collision/resolution
+                for (Enemy e : enemies) {
+                    if (AABB.AABBIntersect(yoshi.getAABB(), e.getAABB())) {
+                        if (e.canJumpOn()) {
+                            if (AABB.AABBIntersectAbove(e.getAABB(), yoshi.getAABB(), yoshi.yvelocity) && yoshi.getY() < ((e.getY() - e.getH() / 2))) {
+                                yoshi.yvelocity = -.2;
+                                e.setX((int) (Math.random() * 200));
+                                e.setY(144);
+                                e.setHealth(10);
 
-                    } else {
-                        yoshi.setGrounded(true);
-                        yoshi.setDeath(true);
+                            } else {
+                                yoshi.setGrounded(true);
+                                yoshi.setDeath(true);
+                            }
+                        } else {
+                            yoshi.setGrounded(true);
+                            yoshi.setDeath(true);
+                        }
                     }
-                }
-                if(AABB.AABBIntersect(yoshi.getAABB(), pewpew.getAABB())){
-                    yoshi.setGrounded(true);
-                    yoshi.setDeath(true);
                 }
 
                 //3.collision resolution
@@ -475,7 +492,7 @@ public class GameLoop {
                     //it's close so shoot
 
                     if (AABB.AABBisLeftOf(yoshi.getAABB(), pewpew.getAABB())) {
-                        Projectile p = new Projectile(pewpew.getX()-4, pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], -1);
+                        Projectile p = new Projectile(pewpew.getX() - 4, pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], -1);
                         //p.setGravity();
                         p.setXVel(5);
                         projectiles.add(p);
@@ -634,10 +651,19 @@ public class GameLoop {
                 yoshi.setCurrentAnimation(stillYoshiData);
                 yoshi.setX(10);
                 yoshi.setY(145);
+                
+                enemies.clear();
+                
+                enemies.add(shyguy);
                 shyguy.setX(130);
                 shyguy.setY(145);
-                enemies.add(shyguy);
                 shyguy.setHealth(10);
+                enemies.add(pewpew);
+                pewpew.setX(250);
+                pewpew.setY(144);
+                pewpew.setHealth(10);
+                
+                
                 c.setX(0);
                 c.setY(0);
             }
