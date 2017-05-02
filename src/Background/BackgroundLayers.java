@@ -31,8 +31,8 @@ public class BackgroundLayers {
 //	};
 
 	
-	public static final String FTL = "backgrounds\\bgTrees\\"; //file tree location
-        public static final String FLL = "backgrounds\\bgLevel\\"; //file level location
-	public static final String FBL = "backgrounds\\bgBushes\\"; //file bushes location
+	public static final String FTL = "res\\backgrounds\\bgTrees\\"; //file tree location
+        public static final String FLL = "res\\backgrounds\\bgLevel\\"; //file level location
+	public static final String FBL = "res\\backgrounds\\bgBushes\\"; //file bushes location
 	public static final String FNE = ".tga"; //file name ending
 }

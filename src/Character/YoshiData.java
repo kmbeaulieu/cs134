@@ -12,7 +12,6 @@ public class YoshiData extends CharacterData {
     boolean canFlutter;
     double jumpOffEnemyYVel;
     int speed;
-    AABB box;
     int numEggs;
     public int projectileTimer;
 
@@ -31,7 +30,6 @@ public class YoshiData extends CharacterData {
         isTongueOut = false;
         this.speed = 2;
         this.goingRight = true;
-        this.box = new AABB((int)x,(int)y);
         numEggs = 0;
         projectileTimer = 500;
         health = 1;
@@ -49,23 +47,20 @@ public class YoshiData extends CharacterData {
     public boolean canFlutter(){
         return canFlutter;
     }
-    public AABB getAABB() {
-        return box;
-    }
 
     public void resetTimer() {
         projectileTimer = 500;
     }
 
-//	public boolean isTongueOut(){
-//		return isTongueOut;
-//	}
-//	public boolean isGoingRight(){
-//		return goingRight;
-//	}
-//	public boolean isGoingLeft(){
-//		return goingLeft;
-//	}
+	public boolean isTongueOut(){
+		return isTongueOut;
+	}
+	public boolean isGoingRight(){
+		return goingRight;
+	}
+	public boolean isGoingLeft(){
+		return goingLeft;
+	}
     public void setTongueOut(boolean b) {
         // TODO Auto-generated method stub
         isTongueOut = b;
@@ -108,16 +103,8 @@ public class YoshiData extends CharacterData {
     public void fall() {
         setY(this.y + (int)this.gravity);
     }
-    
-    public boolean isTongueOut(){
-        return isTongueOut;
-    }
-    
-    public boolean isGoingLeft(){
-        return goingLeft;
-    }
-    
-    public boolean isGoingRight(){
-        return goingRight;
+
+    public void setFlutter(boolean b) {
+        canFlutter = b;
     }
 }

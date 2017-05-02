@@ -1,7 +1,6 @@
 package Helpers;
 
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,13 +19,16 @@ import com.jogamp.opengl.GLProfile;
 import Animation.AnimationData;
 import Animation.AnimationDef;
 import Animation.FrameDef;
-import Background.BackgroundAnimDef;
 import Background.BackgroundDef;
 import Background.BackgroundLayers;
 import Background.Tile;
 import Character.*;
-import Helpers.AABB;
-import Helpers.Camera;
+import Sound.ClipPlayer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class GameLoop {
 
@@ -52,10 +54,6 @@ public class GameLoop {
     private static Tile[][] backgroundLevel;
 
     static BackgroundDef backgroundMain;
-
-    private static void addEnemies() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     BackgroundDef BackgroundForeGround;
     BackgroundDef levelTiles;
     //Tile size for Background
@@ -84,6 +82,7 @@ public class GameLoop {
     private static ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private static AnimationDef shyguywalkleft;
 
+    //Sounds
     public static void main(String[] args) {
         GLProfile gl2Profile;
 
@@ -153,7 +152,7 @@ public class GameLoop {
 
         }
         //105 is the blue sky, it's 101x101 TODO make this the full length of the bgtrees array 
-        tiles.add(new Tile("sky", glTexImageTGAFile(gl, "backgrounds//colortiles//sky.tga", tileSize), tileSize, false));
+        tiles.add(new Tile("sky", glTexImageTGAFile(gl, "res\\backgrounds\\colortiles\\sky.tga", tileSize), tileSize, false));
         Tile[][] skybackground = new Tile[101][101];
         for (int y = 0; y < 101; y++) {
             for (int x = 0; x < 101; x++) {
@@ -175,6 +174,26 @@ public class GameLoop {
         }
 
         //----------THIS IS THE BOTTOM OF LOADING BACKGROUND IMAGES, ADD MORE RIGHT ABOVE ME----------------
+        //-----------SOUND LOADING-----------
+        ClipPlayer cp = new ClipPlayer();
+        Clip jumpClip = null;
+        Clip tongueClip = null;
+        Clip deathClip = null;
+        Clip bopEnemyClip = null;
+        Clip grassStepClip = null;
+        try {
+            tongueClip = cp.loadClip("res\\sounds\\Lick.wav");
+            jumpClip = cp.loadClip("res\\sounds\\Jump.wav");
+            grassStepClip = cp.loadClip("res\\sounds\\");
+            //   bopEnemyClip = cp.loadClip("res\\sounds\\hammer.mp3");
+        } catch (UnsupportedAudioFileException ex) {
+            Logger.getLogger(GameLoop.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(GameLoop.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LineUnavailableException ex) {
+            Logger.getLogger(GameLoop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //-----------END SOUND LOADING-----------
         //load the tile formation for the backgrounds with hills/trees
         loadbg();
 
@@ -185,7 +204,7 @@ public class GameLoop {
         AABB tileAABB;
 
         //yoshi player -- 26 x 32
-        FrameDef[] yoshiStillFrame = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, ".\\sprites\\yoshi1.tga", yoshiSize), yoshiSize, 1000f)};
+        FrameDef[] yoshiStillFrame = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshi1.tga", yoshiSize), yoshiSize, 1000f)};
         AnimationDef stillYoshi = new AnimationDef("stillyoshi", yoshiStillFrame);
         AnimationData stillYoshiData = new AnimationData(stillYoshi);
         YoshiData yoshi = new YoshiData(0, 100, yoshiSize[0], yoshiSize[1], stillYoshiData);
@@ -205,51 +224,51 @@ public class GameLoop {
         //set up the animation for pressing space for yoshi (stick tongue out), the timing is staggered to make it look better
         int[] sizeForFrame1, sizeForFrame2, sizeForFrame3, sizeForFrame4, sizeForFrame5, sizeForFrame6;
         sizeForFrame1 = sizeForFrame2 = sizeForFrame3 = sizeForFrame4 = sizeForFrame5 = sizeForFrame6 = new int[2]; //each frame is a different size so it needs to be stored in the frame information for that current frame
-        FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1, 10f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2, 20f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3, 30f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4, 40f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace6.tga", sizeForFrame6), sizeForFrame6, 60f), //tongue back in
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4, 40f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3, 30f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2, 20f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1, 10f)};
+        FrameDef[] yoshiSpaceFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1, 10f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2, 20f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3, 30f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4, 40f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace6.tga", sizeForFrame6), sizeForFrame6, 60f), //tongue back in
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace5.tga", sizeForFrame5), sizeForFrame5, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace4.tga", sizeForFrame4), sizeForFrame4, 40f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace3.tga", sizeForFrame3), sizeForFrame3, 30f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace2.tga", sizeForFrame2), sizeForFrame2, 20f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshispace\\yoshispace1.tga", sizeForFrame1), sizeForFrame1, 10f)};
         yoshiSpace = new AnimationDef("yoshiSpace", yoshiSpaceFrames);
         AnimationData yoshiSpaceData = new AnimationData(yoshiSpace);
 
         //set up walking (right) animation TODO refactor name
         int[] walkingAnimSize = new int[2];
         FrameDef[] yoshiWalkFrames = new FrameDef[]{
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize, 50f),};
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\1.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\2.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\3.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\4.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\5.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\6.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\7.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\8.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\9.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\10.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\11.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalk\\12.tga", walkingAnimSize), walkingAnimSize, 50f),};
         yoshiWalk = new AnimationDef("yoshiwalk", yoshiWalkFrames);
         AnimationData yoshiWalkingData = new AnimationData(yoshiWalk);
 
         //yoshi walking left animation setup
-        FrameDef[] yoshiWalkLeftFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\1.tga", walkingAnimSize), walkingAnimSize, 10f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\2.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\3.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\4.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\5.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\6.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\7.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\8.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\9.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\10.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\11.tga", walkingAnimSize), walkingAnimSize, 50f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshiwalkleft\\12.tga", walkingAnimSize), walkingAnimSize, 50f),};
+        FrameDef[] yoshiWalkLeftFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\1.tga", walkingAnimSize), walkingAnimSize, 10f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\2.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\3.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\4.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\5.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\6.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\7.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\8.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\9.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\10.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\11.tga", walkingAnimSize), walkingAnimSize, 50f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshiwalkleft\\12.tga", walkingAnimSize), walkingAnimSize, 50f),};
         AnimationDef yoshiWalkLeft = new AnimationDef("yoshiWalkLeft", yoshiWalkLeftFrames);
         AnimationData yoshiWalkingLeftData = new AnimationData(yoshiWalkLeft);
 
@@ -263,20 +282,20 @@ public class GameLoop {
         yoshiDieAnimSize2 = new int[2];
         yoshiDieAnimSize1 = new int[2];
 
-        FrameDef[] yoshiDieFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\1.tga", yoshiDieAnimSize1), yoshiDieAnimSize1, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\2.tga", yoshiDieAnimSize2), yoshiDieAnimSize2, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\3.tga", yoshiDieAnimSize3), yoshiDieAnimSize3, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\4.tga", yoshiDieAnimSize4), yoshiDieAnimSize4, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\5.tga", yoshiDieAnimSize5), yoshiDieAnimSize5, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\6.tga", yoshiDieAnimSize6), yoshiDieAnimSize6, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\7.tga", yoshiDieAnimSize7), yoshiDieAnimSize7, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites\\yoshidie\\8.tga", yoshiDieAnimSize8), yoshiDieAnimSize8, 150f),};
+        FrameDef[] yoshiDieFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\1.tga", yoshiDieAnimSize1), yoshiDieAnimSize1, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\2.tga", yoshiDieAnimSize2), yoshiDieAnimSize2, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\3.tga", yoshiDieAnimSize3), yoshiDieAnimSize3, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\4.tga", yoshiDieAnimSize4), yoshiDieAnimSize4, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\5.tga", yoshiDieAnimSize5), yoshiDieAnimSize5, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\6.tga", yoshiDieAnimSize6), yoshiDieAnimSize6, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\7.tga", yoshiDieAnimSize7), yoshiDieAnimSize7, 150f),
+            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\yoshidie\\8.tga", yoshiDieAnimSize8), yoshiDieAnimSize8, 150f),};
         AnimationDef yoshiDie = new AnimationDef("yoshidie", yoshiDieFrames);
         AnimationData yoshiDieData = new AnimationData(yoshiDie);
 
         //egg sprites
         smallEggSize = new int[2];
-        smallEggSprite = glTexImageTGAFile(gl, "sprites//eggs//small//smalleggfat.tga", smallEggSize);
+        smallEggSprite = glTexImageTGAFile(gl, "res\\sprites\\eggs\\small\\smalleggfat.tga", smallEggSize);
 //        FrameDef[] bigEggFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites//eggs//big//bigeggfat.tga", bigEggSize), bigEggSize, 500f),
 //            new FrameDef(glTexImageTGAFile(gl, "sprites//eggs//big//bigeggtall.tga", bigEggSize), bigEggSize, 500f)};
 //        AnimationDef bigEggAnimDef = new AnimationDef("bigegganimation", bigEggFrames);
@@ -284,7 +303,7 @@ public class GameLoop {
 
         //make an enemy
         int[] shyguySize = new int[2];
-        FrameDef[] shyGuyWalkingFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//shyguy//walk//1.tga", shyguySize), shyguySize, 150f)};
+        FrameDef[] shyGuyWalkingFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\enemies\\shyguy\\walk\\1.tga", shyguySize), shyguySize, 150f)};
         AnimationDef shyGuyWalk = new AnimationDef("walking", shyGuyWalkingFrames);
         AnimationData shyGuyWalkingData = new AnimationData(shyGuyWalk);
         Enemy shyguy = new Enemy(130, 145, shyguySize[0], shyguySize[1], shyGuyWalkingData, true);
@@ -292,18 +311,18 @@ public class GameLoop {
         shyguy.getAABB().setH(shyguySize[1]);
         enemies.add(shyguy);
 
-        int[] pewpewGuySize = new int[2];
-        FrameDef[] pewpewGuyShootFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//1.tga", pewpewGuySize), pewpewGuySize, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//2.tga", pewpewGuySize), pewpewGuySize, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//3.tga", pewpewGuySize), pewpewGuySize, 150f),
-            new FrameDef(glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//4.tga", pewpewGuySize), pewpewGuySize, 150f)
-        };
-        AnimationDef pewpewShootDef = new AnimationDef("pew", pewpewGuyShootFrames);
-        AnimationData pewpewData = new AnimationData(pewpewShootDef);
-        Enemy pewpew = new Enemy(250, 144, pewpewGuySize[0], pewpewGuySize[1], pewpewData, true);
-        int[] pewSize = new int[2];
-        int pewTex = glTexImageTGAFile(gl, "sprites//enemies//pewpewguy//pew.tga", pewSize);
-        enemies.add(pewpew);
+//        int[] pewpewGuySize = new int[2];
+//        FrameDef[] pewpewGuyShootFrames = new FrameDef[]{new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\enemies\\pewpewguy\\1.tga", pewpewGuySize), pewpewGuySize, 150f),
+//            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\enemies\\pewpewguy\\2.tga", pewpewGuySize), pewpewGuySize, 150f),
+//            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\enemies\\pewpewguy\\3.tga", pewpewGuySize), pewpewGuySize, 150f),
+//            new FrameDef(glTexImageTGAFile(gl, "res\\sprites\\enemies\\pewpewguy\\4.tga", pewpewGuySize), pewpewGuySize, 150f)
+//        };
+//        AnimationDef pewpewShootDef = new AnimationDef("pew", pewpewGuyShootFrames);
+//        AnimationData pewpewData = new AnimationData(pewpewShootDef);
+//        Enemy pewpew = new Enemy(250, 144, pewpewGuySize[0], pewpewGuySize[1], pewpewData, true);
+//        int[] pewSize = new int[2];
+//        int pewTex = glTexImageTGAFile(gl, "res\\sprites\\enemies\\pewpewguy\\pew.tga", pewSize);
+//        enemies.add(pewpew);
         //-----------------------BEGIN Physics Setup----------------------------
         // Physics runs at 100fps, or 10ms / physics frame
         int physicsDeltaMS = 10;
@@ -339,13 +358,15 @@ public class GameLoop {
                     shyguy.yvelocity = 0;
                 }
                 if (yoshi.isGrounded() && yoshi.isJumping() && !yoshi.isDead()) {
+                    cp.playClip(jumpClip);
                     yoshi.yvelocity = yoshi.jumpvel;
                     yoshi.setGrounded(false);
+                    // cp.playClip(jumpClip);
 
                 }
                 //if can flutter,pressing jump, and yoshi is falling then flutter jump....needto do something with xvel?
-//                if(yoshi.canFlutter() && kbState[KeyEvent.VK_W] && yoshi.yvelocity>0.0 ){
-//                    yoshi.yvelocity=-.15;
+//                if(yoshi.canFlutter() && yoshi.isJumping() && yoshi.yvelocity>0.0 ){
+//                    yoshi.yvelocity=-.1;
 //                    yoshi.setFlutter(false);
 //
 //                }
@@ -371,21 +392,20 @@ public class GameLoop {
                 int tileEndX = (int) Math.floor((c.getX() + camWidth) / tileSize[0]);
                 int tileEndY = (int) Math.floor((c.getY() + camHeight) / tileSize[1]);
                 yoshi.setGrounded(false);
-                
+
 //                int yoshiTileStartX = (int) Math.floor(yoshi.getX()/tileSize[0]);
 //                int yoshiTileEndX = (int) Math.floor((yoshi.getX()+yoshi.getW())/tileSize[0]);
 //                int yoshiTileStartY = (int) Math.floor(yoshi.getY()/tileSize[1]);
 //                int yoshiTileEndY = (int) Math.floor((yoshi.getY()+yoshi.getH())/tileSize[1]);
-
                 for (int x = tileStartX; x < tileEndX; x++) {
                     for (int y = tileStartY; y < tileEndY; y++) {
                         if (backgroundLevel[y][x].collidable) {
                             tileAABB = new AABB(x * tileSize[0], y * tileSize[1], tileSize[0], tileSize[1]);
                             //ths doesn't work
-//                            if (AABB.AABBIntersectLeftOf(yoshi.getAABB(), tileAABB, yoshi.getPrevX(), yoshi.getX())) {
-//                              //  System.out.println("YOU INTERSECTED LEFT OF THE TILE");
-//                                yoshi.setX(yoshi.getX() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
-//                            }
+                            if (yoshi.isGoingRight() && AABB.AABBIntersectLeftOf(yoshi.getAABB(), tileAABB, yoshi.getPrevX(), yoshi.getX())) {
+                                //  System.out.println("YOU INTERSECTED LEFT OF THE TILE");
+                                yoshi.setX(yoshi.getX() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
+                            }
                             // character fall onto tiles
                             if (AABB.AABBIntersectAbove(tileAABB, yoshi.getAABB(), yoshi.yvelocity)) {
                                 yoshi.setY(yoshi.getY() - AABB.getOverlap(yoshi.getAABB(), tileAABB));
@@ -483,55 +503,45 @@ public class GameLoop {
             //TODO cloudanim.update(deltaTimeMS);
             //------------DO Normal update-----------------------------------------	
             // System.out.println("deltatimems " + deltaTimeMS);
-            pewpew.pewCooldown -= 10;
-            if (pewpew.pewCooldown <= 0 && !pewpew.isDead()) {
-                pewpew.resetPewCooldown();
-                double sqr1 = (yoshi.getX() - pewpew.getX()) * (yoshi.getX() - pewpew.getX());
-                double sqr2 = (yoshi.getY() - pewpew.getY()) * (yoshi.getY() - pewpew.getY());
-                if (Math.sqrt(sqr1 - sqr2) < 50.0) {
-                    //it's close so shoot
-
-                    if (AABB.AABBisLeftOf(yoshi.getAABB(), pewpew.getAABB())) {
-                        Projectile p = new Projectile(pewpew.getX() - 4, pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], -1);
-                        //p.setGravity();
-                        p.setXVel(5);
-                        projectiles.add(p);
-                    } else if (AABB.AABBisRightOf(yoshi.getAABB(), pewpew.getAABB())) {
-                        Projectile p = new Projectile(pewpew.getX() + pewpew.getW(), pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], 1);
-                        p.setXVel(5);
-                        projectiles.add(p);
-                    }
-                    //Projectile p = new Projectile(yoshi.getX() + yoshiSize[0], yoshi.getY(), smallEggSprite, smallEggSize[0], smallEggSize[1], 1);
-                }
-            }
+//            pewpew.pewCooldown -= 10;
+//            if (pewpew.pewCooldown <= 0 && !pewpew.isDead()) {
+//                pewpew.resetPewCooldown();
+//                double sqr1 = (yoshi.getX() - pewpew.getX()) * (yoshi.getX() - pewpew.getX());
+//                double sqr2 = (yoshi.getY() - pewpew.getY()) * (yoshi.getY() - pewpew.getY());
+//                if (Math.sqrt(sqr1 - sqr2) < 50.0) {
+//                    //it's close so shoot
+//
+//                    if (AABB.AABBisLeftOf(yoshi.getAABB(), pewpew.getAABB())) {
+//                        Projectile p = new Projectile(pewpew.getX() - 4, pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], -1);
+//                        //p.setGravity();
+//                        p.setXVel(5);
+//                        projectiles.add(p);
+//                    } else if (AABB.AABBisRightOf(yoshi.getAABB(), pewpew.getAABB())) {
+//                        Projectile p = new Projectile(pewpew.getX() + pewpew.getW(), pewpew.getY() + 6, pewTex, pewSize[0], pewSize[1], 1);
+//                        p.setXVel(5);
+//                        projectiles.add(p);
+//                    }
+//                    //Projectile p = new Projectile(yoshi.getX() + yoshiSize[0], yoshi.getY(), smallEggSprite, smallEggSize[0], smallEggSize[1], 1);
+//                }
+//            }
             //do animation changes that happen even if a key is not pressed (ex walking is not here because it only happens when a key is pressed)
             if (yoshi.isTongueOut()) {
                 yoshi.setCurrentAnimation(yoshiSpaceData);
                 yoshi.update(deltaTimeMS);
-//                yoshiSpaceData.update(deltaTimeMS);
-//                yoshiSprite = yoshiSpaceData.getCurFrameImage();
-//                yoshiSize = yoshiSpaceData.getcurFrameSize();
 
                 if (yoshiSpaceData.getCurFrame() == yoshiSpaceData.getMaxFrame()) {
                     //you are at the max frame so stop the animation
                     yoshi.setTongueOut(false);
                     yoshi.setCurrentAnimation(stillYoshiData);
                     yoshi.update(deltaTimeMS);
-                    //yoshi.setCurrentAnimation(yoshi.)
-//                    yoshiSprite = yoshiStillSprite;
-//                    yoshiSize = yoshiStillSize;
                 }
             }
             if (yoshi.isDead()) {
                 yoshi.setGrounded(true);
                 yoshi.setCurrentAnimation(yoshiDieData);
                 yoshi.update(deltaTimeMS);
-                //  yoshi.update(deltaTimeMS);
-//                yoshiSprite = yoshiDieData.getCurFrameImage();
-//                yoshiSize = yoshiDieData.getcurFrameSize();
-
+                cp.playClip(deathClip);
                 if (yoshi.getCurrentAnimation().getCurFrame() == yoshi.getCurrentAnimation().getMaxFrame()) {
-
                     yoshiDieData.resetAnimation();
                     //reset player and cam
                     yoshi.setX(10);
@@ -539,7 +549,6 @@ public class GameLoop {
                     yoshi.setCurrentAnimation(stillYoshiData);
                     yoshi.setDeath(false);
                     yoshi.update(deltaTimeMS);
-                    //yoshi.update()
                     c.setX(0);
                     c.setY(0);
                 }
@@ -569,12 +578,6 @@ public class GameLoop {
                     }
                     yoshi.setCurrentAnimation(yoshiWalkingLeftData);
                     yoshi.update(deltaTimeMS);
-                    //yoshiWalkingLeftData.update(deltaTimeMS);
-                    // yoshiSprite = yoshiWalkingLeftData.getCurFrameImage();
-                    // yoshiSize = yoshiWalkingLeftData.getcurFrameSize();
-//                    System.out.println("x: " + yoshi.getX());
-//                    System.out.println("y: " + yoshi.getY());
-
                 }
 
                 //go right, continue animation even if at the end
@@ -600,16 +603,11 @@ public class GameLoop {
                     //dont move yoshi but still do walk animation
                     yoshi.setCurrentAnimation(yoshiWalkingData);
                     yoshi.update(deltaTimeMS);
-//                    yoshiWalkingData.update(deltaTimeMS);
-//                    yoshiSprite = yoshiWalkingData.getCurFrameImage();
-//                    yoshiSize = yoshiWalkingData.getcurFrameSize();
                 }
 
                 if (kbState[KeyEvent.VK_W]) {
-                    // System.out.println("press w x: " + yoshi.getX());
-                    // System.out.println("press w y: " + yoshi.getY());
-                    yoshi.setJump(true);
 
+                    yoshi.setJump(true);
                 } else {
                     yoshi.setJump(false);
                 }
@@ -637,7 +635,10 @@ public class GameLoop {
                 //tongue animation TODO add left version
                 if (kbState[KeyEvent.VK_SPACE]) {
                     //get the animation rolling
-                    yoshi.setTongueOut(true);
+                    if (!kbPrevState[KeyEvent.VK_SPACE]) {
+                        cp.playClip(tongueClip);
+                        yoshi.setTongueOut(true);
+                    }
                 }
             }
 
@@ -651,19 +652,20 @@ public class GameLoop {
                 yoshi.setCurrentAnimation(stillYoshiData);
                 yoshi.setX(10);
                 yoshi.setY(145);
-                
+
                 enemies.clear();
-                
+
                 enemies.add(shyguy);
                 shyguy.setX(130);
                 shyguy.setY(145);
                 shyguy.setHealth(10);
-                enemies.add(pewpew);
-                pewpew.setX(250);
-                pewpew.setY(144);
-                pewpew.setHealth(10);
-                
-                
+                shyguy.setGrounded(false);
+//                enemies.add(pewpew);
+//                pewpew.setX(250);
+//                pewpew.setY(144);
+//                pewpew.setHealth(10);
+//                
+
                 c.setX(0);
                 c.setY(0);
             }
@@ -685,7 +687,6 @@ public class GameLoop {
             int tileEndX = (int) Math.floor((c.getX() + camWidth) / tileSize[0]);
             int tileEndY = (int) Math.floor((c.getY() + camHeight) / tileSize[1]);
 
-            // if (AABB.AABBIntersect(c.getAABB(), yoshi.getAABB())) {
             //draw if they intersect
             for (int x = tileStartX; x <= tileEndX; x++) {
                 for (int y = tileStartY; y <= tileEndY; y++) {
@@ -737,7 +738,6 @@ public class GameLoop {
                     }
                 }
             }
-            //}
 
             //TODO draw HUD or other things on top of sprite
             //  window.swapBuffers();
