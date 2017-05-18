@@ -30,7 +30,20 @@ public class Projectile {
     
     //-1 is left, 1 is right
     int dir;
-   
+   public Projectile(double x,double y, int spriteTex, int w, int h, int dir,double speed){
+        this.x = x;
+        this.y = y;
+        damage = 3;
+        this.sprite = spriteTex;
+        this.w = w;
+        this.h = h;
+        this.dir = dir;
+        this.speed = speed;
+        xVel = this.speed;
+        yVel = -0.2;
+        this.box = new AABB((int)x,(int)y,w,h);
+        gravity = .0009;
+    }
     public Projectile(double x,double y, int spriteTex, int w, int h, int dir){
         this.x = x;
         this.y = y;

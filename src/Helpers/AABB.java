@@ -1,8 +1,8 @@
 package Helpers;
 
 public class AABB {
-	private int x; //x pos
-	private int y; //y pos
+	private double x; //x pos
+	private double y; //y pos
 	private int w; //width of AABB
 	private int h; //Height of AABB
 	private int topOverlap;
@@ -15,7 +15,7 @@ public class AABB {
 //            this.h = h;
 //            //needs to add x y
 //        }
-	public AABB(int x,int y,int w,int h){
+	public AABB(double x,double y,int w,int h){
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -27,18 +27,18 @@ public class AABB {
 		this.y = y;
 	}
 	
-	public int getX(){
+	public double getX(){
 		return x;
 	}
-	public int getY(){
+	public double getY(){
 		return y;
 	}
 	
-	public void updateX(int x){
+	public void updateX(double x){
 		this.x =x;
 		
 	}
-	public void updateY(int y){
+	public void updateY(double y){
 		this.y = y;
 	}
 	
@@ -84,6 +84,65 @@ public class AABB {
 		return true;
 	}
 	
+	
+        public static double getXOverlap(AABB box1, AABB box2){
+            double ov=0;
+            //box1 to right of box2
+            if(!(box1.x<box2.x+box2.w)){
+                ov=(box2.x+box2.w)-box1.x;
+                return ov;
+            }
+            //box1 left of box2
+            if((box1.x+box1.w>box2.x)){
+                ov=(box1.x+box1.w)-box2.x;
+                return ov;
+            }
+//            //box1 above box2
+//            if(box1.y + box1.h < box2.y){
+//                ov=(5);
+//                return ov;
+//            }
+//            //box1 below box2
+//            if(box1.y > box2.y + box2.h){
+//                ov=(box2.y+box2.h)-box1.y;
+//                return ov;
+//            }
+            return ov;
+        }
+        
+        public static double getYOverlap(AABB box1, AABB box2){
+            double ov=0;
+            
+           //box1 !above box2
+            if((box1.y + box1.h < box2.y)){
+                ov=(box1.y+box1.h)-box2.y;
+                return ov;
+            }
+            //box1 below box2
+            if((box1.y < box2.y + box2.h)){
+                ov=(box1.y+box2.h)-box1.h;
+                return ov;
+            }
+            return ov;
+        }
+        public static boolean AABBIntersectLeftOf(AABB box1,AABB box2, double prevX, double currX){
+            return (prevX<currX && AABBIntersect(box1,box2));
+        }
+        
+        public static boolean AABBIntersectAbove(AABB box1, AABB box2, double yvel){
+            //falling down and there is an intersect
+            return AABBIntersect(box1, box2) && yvel>0;
+           // return  false;
+        }
+	/**
+	 * if box 1 is below box 2
+	 * @param box1 AABB to check
+	 * @param box2 AABB to check
+	 * @return true if box 1 is below, false if not
+	 */
+	public static boolean AABBisBelow(AABB box1, AABB box2){
+            return box1.y > box2.y + box2.h;
+	}
 	/**
 	 * if box 1 is to the left of box 2
 	 * @param box1 AABB to check
@@ -115,64 +174,5 @@ public class AABB {
             
             
             return box1.y + box1.h < box2.y;
-	}
-        public static int getOverlap(AABB box1, AABB box2){
-            int ov;
-            //box1 to right of box2
-            if(box1.x>box2.x+box2.w){
-                ov=(box1.x+box2.w)-box1.w;
-                return ov;
-            }
-            //box1 left of box2
-            if(box1.x+box1.w<box2.x){
-                ov=(box1.x+box1.w)-box2.x;
-                return ov;
-            }
-            //box1 above box2
-            if(box1.y + box1.h < box2.y){
-                ov=(5);
-                return ov;
-            }
-            //box1 below box2
-            if(box1.y > box2.y + box2.h){
-                ov=(box2.y+box2.h)-box1.y;
-                return ov;
-            }
-            return 0;
-        }
-        public static boolean AABBIntersectLeftOf(AABB box1,AABB box2, double prevX, double currX){
-            return (prevX<currX && AABBIntersect(box1,box2));
-        }
-        
-        public static boolean AABBIntersectAbove(AABB box1, AABB box2, double yvel){
-            //falling down and there is an intersect
-            // && AABBisBelow(box1,box2)
-//            // box1 to the right
-//		 if (box1.x > box2.x + box2.w) {
-//		 return false;
-//		 }
-//		 // box1 to the left
-//		 if (box1.x + box1.w < box2.x) {
-//		 return false;
-//		 }
-//		 // box1 below
-//		 if (box1.y > box2.y + box2.h) {
-//		 return false;
-//		 }
-//		 // box1 above
-//		 if (!(box1.y + box1.h < box2.y)) {
-//                     if(yvel>.009)return true;
-//		 }
-            return AABBIntersect(box1, box2) && yvel>0;
-           // return  false;
-        }
-	/**
-	 * if box 1 is below box 2
-	 * @param box1 AABB to check
-	 * @param box2 AABB to check
-	 * @return true if box 1 is below, false if not
-	 */
-	public static boolean AABBisBelow(AABB box1, AABB box2){
-            return box1.y > box2.y + box2.h;
 	}
 }

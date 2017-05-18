@@ -27,13 +27,12 @@ public class CharacterData {
     int h;
     public double jumpvel;
     boolean isDead;
-    ArrayList<Item> projectiles;
+    public ArrayList<Projectile> projectiles;
 
     /**
      * create a new character in the game. can be user or AI
      * @param x pos
      * @param y pos
-     * @param sprite texture for the character
      * @param w width 
      * @param h height
      * @param ad the animation data the character starts out with
@@ -55,6 +54,7 @@ public class CharacterData {
         jumpvel = -.3;
         isDead = false;
         health = 10;
+        projectiles = new ArrayList();
     }
 
     public double getPrevX(){
@@ -80,12 +80,12 @@ public class CharacterData {
 
     public void setX(double x) {
         this.x = x;
-        box.updateX((int)this.x);
+        box.updateX(this.x);
     }
 
     public void setY(double y) {
         this.y = y;
-        box.updateY((int)this.y);
+        box.updateY(this.y);
     }
 
     public int getW() {

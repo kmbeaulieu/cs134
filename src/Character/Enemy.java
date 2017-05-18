@@ -8,6 +8,7 @@ package Character;
 import Animation.AnimationData;
 import Helpers.Camera;
 import Helpers.GameLoop;
+import Helpers.WeightedAction;
 import com.jogamp.opengl.GL2;
 import java.util.ArrayList;
 import java.util.Random;
@@ -21,15 +22,16 @@ public class Enemy extends CharacterData {
     private int distanceMoved;
     private boolean goingLeft;
     private boolean canJumpOn;
+    public boolean canShoot;
     // private boolean goingRight;
     private boolean seesPlayer;
+    private final double CLOSE_TO_PLAYER_DISTANCE = 100;
+    public int projTex;
+    public int[] projTexSize;
+    public double projSpeed;
+    public int pewCooldown = 1000;
 
-    public int pewCooldown = 500;
     private Action currentAction;
-
-    public boolean canJumpOn() {
-        return canJumpOn;
-    }
 
     private void resetAndChooseAction() {
         currentAction.resetTimer();
@@ -37,22 +39,33 @@ public class Enemy extends CharacterData {
         currentAction = getNewAction();
     }
 
-    private void checkIfSeesPlayer() {
+    private void checkIfSeesPlayer(double playerx, double playery) {
         //TODO maybe make later
-    }
-    
-    public enum EnemyType{
-        SHYGUY, SHYGUYSHOOTER, 
+        seesPlayer = (Math.abs(playerx - x) < CLOSE_TO_PLAYER_DISTANCE || Math.abs(playery - y) < CLOSE_TO_PLAYER_DISTANCE);
+
     }
 
-    public enum ActionsAvailable{
-        NEARPLAYER, FARPLAYER;
-        
-        ArrayList<Action> actAv;
-        ArrayList<Double> weights;
-        
+    public int getProjTex() {
+        //return the projectile texture of this enemy;
+        return projTex;
     }
-    
+
+    private void setProjSpeed(double s) {
+        projSpeed = s;
+    }
+
+    /**
+     * set the texture info this enemy uses for projectiles
+     *
+     * @param tex texture
+     * @param wh width/height array
+     */
+    public void setProjectileInfo(int tex, int[] wh) {
+        projTex = tex;
+        projTexSize = wh;
+
+    }
+
     public enum Action {
         WALK(5000), SHOOT(5000), RUNAWAY(5000), JUMP(5000), NOTHING(5000);
 
@@ -68,8 +81,7 @@ public class Enemy extends CharacterData {
             this.TotalTimeToRun = r;
             this.currentTimeLeft = r;
             this.doneWithAction = false;
-            //weight =w;
-            
+            //weight =w;        
         }
 
         boolean isDoneWithAction() {
@@ -99,25 +111,25 @@ public class Enemy extends CharacterData {
         distanceMoved = 0;
         goingLeft = true;
         seesPlayer = false;
-        currentAction = Action.WALK;
+        currentAction = Action.NOTHING;
         this.canJumpOn = canJumpOn;
+        seesPlayer = false;
+        canShoot = false;
+        projSpeed = 1;
+    }
 
+    public boolean canJumpOn() {
+        return canJumpOn;
     }
 
     public void resetPewCooldown() {
-        pewCooldown = 500;
+        pewCooldown = 1000;
     }
 
     @Override
     public void update(float dt) {
-        //updates
+        //update animation
         currAnimation.update(dt);
-        // System.out.println(dt);
-        checkIfSeesPlayer();
-        if (seesPlayer) {
-            //force choose action? 
-
-        }
         //do action
         doAction(dt);
         //new action check for next frame
@@ -135,67 +147,73 @@ public class Enemy extends CharacterData {
     Action getNewAction() {
         Random r = new Random();
         int roll = r.nextInt(10);
-
-        if(seesPlayer){
-            //choose a weighted action based on if the enemy sees the player
-            
-        }else{
-            if (roll < 5) {
-                return Action.WALK;
-            } else if (roll < 8) {
-                return Action.JUMP;
-            } else if (roll < 10) {
-                return Action.SHOOT;
-            } else {
-                return Action.NOTHING;
-            }
+        if (roll < 6) {
+            return Action.WALK;
+        } else if (roll < 7) {
+            return Action.JUMP;
+        } else if (roll < 9) {
+            return Action.SHOOT;
+        } else {
+            return Action.NOTHING;
         }
-       return Action.NOTHING;
     }
 
     private void doAction(float dt) {
         double updatedtime;
-
         switch (currentAction) {
             case WALK:
-                //do walk
-                if (distanceMoved < 20 && goingLeft) {
+                //do walk ATM is just back and forth
+                if (distanceMoved < 35 && goingLeft) {
                     setX(getX() - .5);
                     distanceMoved += 1;
-                } else if (distanceMoved < 20 && !goingLeft) {
+                } else if (distanceMoved < 35 && !goingLeft) {
                     setX(getX() + .5);
                     distanceMoved += 1;
-                } else if (distanceMoved >= 20) {
+                } else if (distanceMoved >= 35) {
                     distanceMoved = 0;
                     //turn around
                     goingLeft = !goingLeft;
                 }
                 updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-
-                System.out.println("is walking, time left: " + currentAction.getTimeLeft());
-
+               //  System.out.println("WALKING");
                 break;
             case SHOOT: //do shoot
+                if (canShoot) {
+                    if (pewCooldown <= 0) {
+                        resetPewCooldown();
+                        double halfheight = (y + h / 2);
+                        if (goingLeft) {
+                            projectiles.add(new Projectile(x - 3, halfheight, projTex, projTexSize[0], projTexSize[1], -1, 1));
+                        } else {
+                            projectiles.add(new Projectile((x + w + 3), halfheight, projTex, projTexSize[0], projTexSize[1], 1, 1));
+                        }
+                    }
+                    pewCooldown -= dt;
+                    updatedtime = currentAction.getTimeLeft() - dt;
 
-                updatedtime = currentAction.getTimeLeft() - dt;
+                } else {
+                    updatedtime = 0;
+
+                }
                 currentAction.updateTimer(updatedtime);
-                System.out.println("is shooting");
+              //     System.out.println("SHOOTING");
                 break;
             case JUMP: //do jump
 
-                //   jumpPressed=true;
-                updatedtime = currentAction.getTimeLeft() - dt;
+                yvelocity = jumpvel;
+                isGrounded = false;
+                updatedtime = 0;
+                // updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-                System.out.println("is jumping");
+             //      System.out.println("JUMPING");
                 break;
             case NOTHING: //do nothing
 
                 updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-                System.out.println("is doing nothing");
+            //       System.out.println("is doing nothing");
                 break;
         }
     }
-
 }

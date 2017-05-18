@@ -30,6 +30,7 @@ public class YoshiData extends CharacterData {
         isTongueOut = false;
         this.speed = 2;
         this.goingRight = true;
+        this.goingLeft=false;
         numEggs = 0;
         projectileTimer = 500;
         health = 1;
@@ -42,7 +43,6 @@ public class YoshiData extends CharacterData {
     public void setGrounded(boolean b){
         super.setGrounded(b);
         //auto set the flutter for yoshi every time you touch the ground
-        canFlutter=true;
     }
     public boolean canFlutter(){
         return canFlutter;
