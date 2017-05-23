@@ -130,6 +130,9 @@ public class Enemy extends CharacterData {
     public void update(float dt) {
         //update animation
         currAnimation.update(dt);
+        box.setW(currAnimation.getcurFrameSize()[0]);
+        box.setH(currAnimation.getcurFrameSize()[1]);
+
         //do action
         doAction(dt);
         //new action check for next frame
@@ -176,7 +179,7 @@ public class Enemy extends CharacterData {
                 }
                 updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-               //  System.out.println("WALKING");
+                //  System.out.println("WALKING");
                 break;
             case SHOOT: //do shoot
                 if (canShoot) {
@@ -197,7 +200,7 @@ public class Enemy extends CharacterData {
 
                 }
                 currentAction.updateTimer(updatedtime);
-              //     System.out.println("SHOOTING");
+                //     System.out.println("SHOOTING");
                 break;
             case JUMP: //do jump
 
@@ -206,13 +209,13 @@ public class Enemy extends CharacterData {
                 updatedtime = 0;
                 // updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-             //      System.out.println("JUMPING");
+                //      System.out.println("JUMPING");
                 break;
             case NOTHING: //do nothing
 
                 updatedtime = currentAction.getTimeLeft() - dt;
                 currentAction.updateTimer(updatedtime);
-            //       System.out.println("is doing nothing");
+                //       System.out.println("is doing nothing");
                 break;
         }
     }

@@ -21,7 +21,7 @@ public class CharacterData {
     public double gravity = .0009;
     int health;
     boolean jumpPressed;
-    protected AABB box;
+    public  AABB box;
     int sprite;
     int w;
     int h;
@@ -31,16 +31,17 @@ public class CharacterData {
 
     /**
      * create a new character in the game. can be user or AI
+     *
      * @param x pos
      * @param y pos
-     * @param w width 
+     * @param w width
      * @param h height
      * @param ad the animation data the character starts out with
      */
     public CharacterData(double x, double y, int w, int h, AnimationData ad) {
         this.x = x;
         currAnimation = ad;
-        prevX=this.x;
+        prevX = this.x;
         this.y = y;
         prevY = this.y;
         this.sprite = currAnimation.getCurFrameImage();
@@ -50,26 +51,32 @@ public class CharacterData {
         jumpPressed = false;
         yvelocity = 0.0;
         isGrounded = false;
-        this.box = new AABB((int)x,(int)y);
+        this.box = new AABB((int) x, (int) y);
         jumpvel = -.3;
         isDead = false;
         health = 10;
         projectiles = new ArrayList();
+        box.setW(currAnimation.getcurFrameSize()[0]);
+        box.setH(currAnimation.getcurFrameSize()[1]);
+
     }
 
-    public double getPrevX(){
+    public double getPrevX() {
         return prevX;
     }
-    public void setPrevX(double x){
-        prevX=x;
+
+    public void setPrevX(double x) {
+        prevX = x;
     }
-    
-    public double getPrevY(){
+
+    public double getPrevY() {
         return prevY;
     }
-    public void setPrevY(double y){
-        prevY=y;
+
+    public void setPrevY(double y) {
+        prevY = y;
     }
+
     public void setDeath(boolean b) {
         isDead = b;
     }
@@ -112,22 +119,26 @@ public class CharacterData {
         health = h;
     }
 
-   public void update(float deltaTime) {
+    public void update(float deltaTime) {
         currAnimation.update(deltaTime);
+        box.setW(currAnimation.getcurFrameSize()[0]);
+        box.setH(currAnimation.getcurFrameSize()[1]);
+
     }
-   
-   public AnimationData getCurrentAnimation(){
-       return currAnimation;
-   }
+
+    public AnimationData getCurrentAnimation() {
+        return currAnimation;
+    }
 
     public void draw(GL2 gl, Camera c) {
-        GameLoop.glDrawSprite(gl, currAnimation.getCurFrameImage() , (int)(x-c.getX()), (int)(y-c.getY()), currAnimation.def.frames[currAnimation.getCurFrame()].frameSize[0], currAnimation.def.frames[currAnimation.getCurFrame()].frameSize[1]);
+        GameLoop.glDrawSprite(gl, currAnimation.getCurFrameImage(), (int) (x - c.getX()), (int) (y - c.getY()), currAnimation.def.frames[currAnimation.getCurFrame()].frameSize[0], currAnimation.def.frames[currAnimation.getCurFrame()].frameSize[1]);
     }
 
     //for the game loop to use
     public double getX() {
         return x;
     }
+
     public double getY() {
         return y;
     }
@@ -149,7 +160,8 @@ public class CharacterData {
     public void setGrounded(boolean b) {
         isGrounded = b;
     }
-    public void setCurrentAnimation(AnimationData ad){
+
+    public void setCurrentAnimation(AnimationData ad) {
         currAnimation = ad;
     }
 

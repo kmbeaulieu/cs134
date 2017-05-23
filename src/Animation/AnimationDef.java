@@ -1,7 +1,7 @@
 package Animation;
 
 public class AnimationDef {
-	String name;
+	public String name;
 	public FrameDef[] frames;	
 	
 	public AnimationDef(String name, FrameDef[] frames){

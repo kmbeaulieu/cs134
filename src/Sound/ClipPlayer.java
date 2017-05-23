@@ -49,5 +49,9 @@ public class ClipPlayer {
             clip.setFramePosition(0);
         }
     }
+    
+    public boolean isPlaying(Clip clip){
+       return clip.isRunning();
+    }
 
 }

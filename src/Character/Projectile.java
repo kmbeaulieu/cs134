@@ -29,15 +29,17 @@ public class Projectile {
     int h; 
     
     //-1 is left, 1 is right
-    int dir;
-   public Projectile(double x,double y, int spriteTex, int w, int h, int dir,double speed){
+    public int dirX;
+    //-1 is up, 1 is down
+    public int dirY;
+   public Projectile(double x,double y, int spriteTex, int w, int h, int dirX,double speed){
         this.x = x;
         this.y = y;
         damage = 3;
         this.sprite = spriteTex;
         this.w = w;
         this.h = h;
-        this.dir = dir;
+        this.dirX = dirX;
         this.speed = speed;
         xVel = this.speed;
         yVel = -0.2;
@@ -51,12 +53,38 @@ public class Projectile {
         this.sprite = spriteTex;
         this.w = w;
         this.h = h;
-        this.dir = dir;
         speed = 5;
         xVel = speed;
         yVel = -0.2;
         this.box = new AABB((int)x,(int)y,w,h);
         gravity = .0009;
+    }
+    //for things that shoot in a straight line based off of an angle
+    public Projectile(double x,double y, int spriteTex, int w, int h, double theta){
+        this.x = x;
+        this.y = y;
+        damage = 3;
+        this.sprite = spriteTex;
+        this.w = w;
+        this.h = h;
+        if(theta>0 && theta<Math.PI){
+            //going up
+            dirY = -1;
+            //if quadrant 1 (top right) or quadrant 4 (bottom right) then going right
+            if((theta>0 && theta<(Math.PI/2)) || (theta>(3*Math.PI/2)&& theta<2*Math.PI)){
+                dirX = 1;
+            }else{
+                dirX=-1;
+            }
+        }else{
+            dirY = 1;
+        }
+       // this.dir = dir;
+        speed = .4;
+        xVel = speed;
+        yVel = speed;
+        this.box = new AABB(x,y,w,h);
+        gravity = .002;
     }
     public void setGravity(double d){
         gravity = d;
@@ -77,12 +105,7 @@ public class Projectile {
     public int getSprite(){
         return sprite;
     }
-    public void setDir(int x){
-        dir = x;
-    }
-    public int getDir(){
-        return dir;
-    }
+   
     public double getSpeed(){
         return speed;
     }
@@ -127,9 +150,12 @@ public class Projectile {
     public double getGravity(){
     	return gravity;
     }
+    public int getDirX(){
+     return dirX;   
+    }
     
     public void draw(GL2 gl, Camera c){
-     glDrawSprite(gl, getSprite(),(int)getX() - c.getX(),(int)getY() - c.getY(), getW(), getH());
+     glDrawSprite(gl, getSprite(),(int)getX() - (int)c.getX(),(int)getY() - (int)c.getY(), getW(), getH());
 
     }
 }

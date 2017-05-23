@@ -1,0 +1,148 @@
+brushes = 97
+array_width = 50
+array_height = 50
+cell_width = 16
+cell_height = 16
+layer_selected = 0
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\colortiles\sky.tga",0,0,0,0,0),1726508,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\colortiles\sky.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\106.tga",0,0,0,0,0),991622,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\106.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\107.tga",0,0,0,0,0),11331387,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\107.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\108.tga",0,0,0,0,0),6698611,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\108.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\109.tga",0,0,0,0,0),9371984,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\109.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\110.tga",0,0,0,0,0),16766150,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\110.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\111.tga",0,0,0,0,0),11097305,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\111.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\112.tga",0,0,0,0,0),7679367,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\112.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\113.tga",0,0,0,0,0),12776523,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\113.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\114.tga",0,0,0,0,0),2940946,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\114.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\115.tga",0,0,0,0,0),13363569,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\115.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\116.tga",0,0,0,0,0),15594195,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\116.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\117.tga",0,0,0,0,0),15944179,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\117.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\118.tga",0,0,0,0,0),8609570,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\118.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\119.tga",0,0,0,0,0),11839173,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\119.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\120.tga",0,0,0,0,0),7880690,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\120.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\121.tga",0,0,0,0,0),6290759,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\121.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\122.tga",0,0,0,0,0),7760387,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\122.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\123.tga",0,0,0,0,0),12660426,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\123.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\124.tga",0,0,0,0,0),7315663,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\124.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\125.tga",0,0,0,0,0),4497715,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\125.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\126.tga",0,0,0,0,0),1571212,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\126.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\127.tga",0,0,0,0,0),6345471,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\127.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\128.tga",0,0,0,0,0),15986075,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\128.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\129.tga",0,0,0,0,0),11215680,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\129.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\130.tga",0,0,0,0,0),6338952,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\130.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\131.tga",0,0,0,0,0),13710414,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\131.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\132.tga",0,0,0,0,0),4513873,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\132.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\133.tga",0,0,0,0,0),14161264,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\133.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\134.tga",0,0,0,0,0),766471,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\134.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\135.tga",0,0,0,0,0),15049443,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\135.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\136.tga",0,0,0,0,0),2603562,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\136.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\137.tga",0,0,0,0,0),16207233,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\137.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\138.tga",0,0,0,0,0),10339005,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\138.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\139.tga",0,0,0,0,0),11738931,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\139.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\140.tga",0,0,0,0,0),12114190,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\140.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\141.tga",0,0,0,0,0),11670935,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\141.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\142.tga",0,0,0,0,0),9280750,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\142.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\143.tga",0,0,0,0,0),9591172,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\143.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\144.tga",0,0,0,0,0),11258703,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\144.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\145.tga",0,0,0,0,0),1035289,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\145.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\146.tga",0,0,0,0,0),16421739,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\146.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\147.tga",0,0,0,0,0),5468021,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\147.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\148.tga",0,0,0,0,0),10052787,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\148.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\149.tga",0,0,0,0,0),7230302,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\149.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\150.tga",0,0,0,0,0),15594004,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\150.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\151.tga",0,0,0,0,0),15688000,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\151.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\152.tga",0,0,0,0,0),1795090,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\152.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\153.tga",0,0,0,0,0),6554252,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\153.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\154.tga",0,0,0,0,0),14393568,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\154.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\155.tga",0,0,0,0,0),3122776,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\155.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\156.tga",0,0,0,0,0),1291329,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\156.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\157.tga",0,0,0,0,0),15898845,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\157.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\158.tga",0,0,0,0,0),9773522,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\158.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\159.tga",0,0,0,0,0),5213028,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\159.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\160.tga",0,0,0,0,0),15134621,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\160.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\161.tga",0,0,0,0,0),9156455,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\161.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\162.tga",0,0,0,0,0),30290,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\162.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\163.tga",0,0,0,0,0),56704,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\163.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\164.tga",0,0,0,0,0),6651342,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\164.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\165.tga",0,0,0,0,0),8071347,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\165.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\166.tga",0,0,0,0,0),4709386,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\166.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\167.tga",0,0,0,0,0),3451462,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\167.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\168.tga",0,0,0,0,0),1117824,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\168.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\169.tga",0,0,0,0,0),16690946,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\169.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\170.tga",0,0,0,0,0),15539090,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\170.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\171.tga",0,0,0,0,0),4170258,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\171.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\172.tga",0,0,0,0,0),9896762,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\172.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\173.tga",0,0,0,0,0),4100480,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\173.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\174.tga",0,0,0,0,0),1895907,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\174.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\175.tga",0,0,0,0,0),92516,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\175.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\176.tga",0,0,0,0,0),7548467,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\176.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\177.tga",0,0,0,0,0),2552346,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\177.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\178.tga",0,0,0,0,0),11617273,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\178.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\179.tga",0,0,0,0,0),12801273,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\179.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\180.tga",0,0,0,0,0),14783020,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\180.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\181.tga",0,0,0,0,0),10128954,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\181.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\182.tga",0,0,0,0,0),5087801,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\182.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\183.tga",0,0,0,0,0),14134363,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\183.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\184.tga",0,0,0,0,0),16179724,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\184.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\185.tga",0,0,0,0,0),9207735,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\185.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\186.tga",0,0,0,0,0),7173133,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\186.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\187.tga",0,0,0,0,0),8721210,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\187.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\188.tga",0,0,0,0,0),14044522,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\188.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\189.tga",0,0,0,0,0),14583097,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\189.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\190.tga",0,0,0,0,0),3531735,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\190.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\191.tga",0,0,0,0,0),13605224,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\191.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\192.tga",0,0,0,0,0),14338195,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\192.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\193.tga",0,0,0,0,0),10159570,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\193.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\194.tga",0,0,0,0,0),4424529,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\194.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\195.tga",0,0,0,0,0),9959521,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\195.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\196.tga",0,0,0,0,0),8564618,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\196.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\197.tga",0,0,0,0,0),2734054,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\197.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\198.tga",0,0,0,0,0),4012418,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\198.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\199.tga",0,0,0,0,0),4385809,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\199.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\200.tga",0,0,0,0,0),8923865,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\200.tga")
+scr_add_brush(0,sprite_add("C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\201.tga",0,0,0,0,0),3775801,"C:\Users\Kori\Documents\GitHub\cs134netbeans\cs134\res\backgrounds\bgLevel\201.tga")
+scr_load_array("private static int background[][] = {
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,25,1,1,46,47,0,0,0,0,88,83,78,73,68,63,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,6,5,0,0,0,0,0,0,0,0,36,24,16,16,45,48,0,0,96,92,87,82,77,72,67,62,58,55,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 1,2,1,2,1,2,1,2,3,4,1,2,1,2,1,2,1,2,1,23,28,38,44,2,1,2,95,91,86,81,76,71,66,61,57,54,1,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 16,17,16,17,16,17,16,17,17,16,16,17,16,17,16,17,16,17,16,22,27,27,43,50,16,17,94,90,85,80,75,70,65,60,56,53,16,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 7,8,9,10,11,12,8,7,7,12,9,9,7,15,15,11,15,11,15,21,26,33,42,49,7,8,93,89,84,79,74,69,64,59,32,52,7,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+};")
+layer_selected = 1
+scr_add_brush(1,-1,16711680,"")
+scr_add_brush(1,-1,255,"")
+scr_load_array("private static int collisions[][] = {
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+};")
+layer_selected = 2
+scr_add_brush(2,-1,16711680,"")
+scr_add_brush(2,-1,255,"")
+scr_load_array("private static int objects[][] = {
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+};")

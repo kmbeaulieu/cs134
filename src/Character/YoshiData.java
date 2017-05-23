@@ -2,6 +2,10 @@ package Character;
 
 import Animation.AnimationData;
 import Helpers.AABB;
+import Helpers.Camera;
+import Helpers.GameLoop;
+import static Helpers.GameLoop.glDrawSprite;
+import com.jogamp.opengl.GL2;
 
 public class YoshiData extends CharacterData {
 
@@ -12,31 +16,50 @@ public class YoshiData extends CharacterData {
     boolean canFlutter;
     double jumpOffEnemyYVel;
     int speed;
-    int numEggs;
+    public int numEggs;
     public int projectileTimer;
+    public int aimTex;
+    public int[] aimSize;
+    public boolean isAiming;
+    public double aimX;
+    public double aimY;
+    //double in radians
+    public double theta;
+    public double prevTheta;
+    public int score;
 
     /**
      * Make a yoshi at a certain coordinate. The default speed is 5.
      *
      * @param x sprite x coordinate.
      * @param y sprite y coordinate.
-     * @param sprite sprite texture
      * @param w sprite width
      * @param h sprite height
+     * @param aimTex texture for aiming
      * @param d starting animation
+     * @param aimSize int[] for tex size for aiming
      */
-    public YoshiData(double x, double y, int w, int h, AnimationData d) {
+    public YoshiData(double x, double y, int w, int h, AnimationData d,int aimTex,int[] aimSize) {
         super(x, y, w, h, d);
         isTongueOut = false;
         this.speed = 2;
         this.goingRight = true;
         this.goingLeft=false;
-        numEggs = 0;
+        numEggs = 5;
         projectileTimer = 500;
         health = 1;
         jumpOffEnemyYVel=-.1;
         canFlutter=true;
-
+        isAiming=false;
+        //not aiming
+        aimX = x+10;
+        aimY = y+10;
+        //in radians
+        theta = 0;
+        prevTheta = 0;
+        this.aimTex = aimTex;
+        this.aimSize = aimSize;
+        score=0;
     }
 
     @Override
@@ -85,6 +108,66 @@ public class YoshiData extends CharacterData {
         this.goingRight = true;
         this.goingLeft = false;
     }
+
+    @Override
+    public AnimationData getCurrentAnimation() {
+        return super.getCurrentAnimation(); 
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime); 
+        if(isAiming){
+            if(goingLeft){
+                //aimer will be on the left side, starting at bottom
+                //save point
+                prevTheta = theta;
+                theta-=Math.PI/128;
+                System.out.println("yoshi x = "+x+" yoshi y = " +y+" aimx "+aimX+" aimy "+aimY);
+                aimX = x-20 + ((60) * Math.cos(theta));
+                aimY = (60*Math.sin(theta));
+                if(theta<(Math.PI/2) || theta>(3*(Math.PI)/2)){
+                    theta = Math.PI;
+                }//if angle is greater than straight up
+                //x = rcostheta
+                
+            }else if(goingRight){
+                //aimer will be on the right side, starting at bottom
+                //save point
+                prevTheta = theta;
+                //go up in pi/12 increments
+                theta+=Math.PI/128;
+                System.out.println("yoshi x = "+x+" yoshi y = " +y+" aimx "+aimX+" aimy "+aimY);
+                aimX = x+20 + ((60) * Math.cos(theta));
+                aimY = (60*Math.sin(theta));
+                //fix the angle
+                if(theta<0 || theta>(Math.PI/2)){
+                    theta = 0;
+                }//if angle is greater than straight up
+               
+            }
+        }
+    }
+    
+    public void resetAim(){
+        theta = 0;
+        prevTheta=0;
+    }
+
+    @Override
+    public double updateyvelocity() {
+        return super.updateyvelocity(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void draw(GL2 gl, Camera c) {
+        super.draw(gl, c); 
+        if(isAiming){
+            GameLoop.glDrawSprite(gl, aimTex , (int)(aimX-c.getX()), (int)(y-aimY-c.getY()),aimSize[0], aimSize[1]);
+        }
+    }
+    
+    
 
     /**
      * move yoshi to the left, also update its left/right status
